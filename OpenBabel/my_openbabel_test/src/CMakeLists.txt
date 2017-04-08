@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.6)
+add_executable(conv ../src/conv.cpp)
+#target_link_libraries(conv openbabel)
+#target_link_libraries(conv ../../OpenBabel-src/build-Linux/src/libopenbabel.a)
+target_link_libraries(conv /mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/my_openbabel_test/cmake/libopenbabel.a)
+include_directories(../../OpenBabel-src/src/include ../../OpenBabel-src/build-Linux/include)

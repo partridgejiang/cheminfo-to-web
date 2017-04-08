@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Indigo-Js Benchmarks</title>
+	<link rel="stylesheet" type="text/css" href="default.css" />	
+	<script async type="text/javascript" src="../../bin/indigo.js"></script>
+	<script>
+		var Indigo = {};  // indigo namespace
+		function $(id)
+		{
+			return document.getElementById(id);
+		}
+		function init()
+		{
+			Module.logReadFiles = true;
+			bindIndigoFuncs();
+			
+			var inputSrc = $('inputSrcFile');
+			inputSrc.addEventListener('change', function(e){			  
+				openInputFile(inputSrc.files[0]);
+			});
+			$('btnExec').addEventListener('click', function(e){
+				runBenchmarks();
+			});
+		}		
+		function bindIndigoFuncs()
+		{
+			// bind indigo functions
+			Indigo.setOption = Module.cwrap('indigoSetOption', 'string', ['string', 'string']);
+			Indigo.clone = Module.cwrap('indigoClone', 'number', ['number']);
+			Indigo.free = Module.cwrap('indigoFree', 'number', ['number']);
+			Indigo.canonicalSmiles = Module.cwrap('indigoCanonicalSmiles', 'string', ['number']);
+			Indigo.clearProperties = Module.cwrap('indigoClearProperties', 'number', ['number']);
+			Indigo.countSSSR = Module.cwrap('indigoCountSSSR', 'number', ['number']);
+			Indigo.iterateTautomers = Module.cwrap('indigoIterateTautomers', 'number', ['number', 'string']);
+			Indigo.iteratorNext = Module.cwrap('indigoNext', 'number', ['number']);
+			Indigo.iteratorHasNext = Module.cwrap('indigoHasNext ', 'number', ['number']);
+			Indigo.saveCml = Module.cwrap('indigoCml', 'string', ['number']);
+			Indigo.saveMol = Module.cwrap('indigoMolfile', 'string', ['number']);
+			Indigo.saveSmiles = Module.cwrap('indigoSmiles', 'string', ['number']);
+			Indigo.nameToStructure = Module.cwrap('indigoNameToStructure', 'number', ['string', 'string']);
+			Indigo.loadMoleculeFromString = Module.cwrap('indigoLoadMoleculeFromString', 'number', ['string']);
+			Indigo.clean2d = Module.cwrap('indigoClean2d', 'number', ['number']);
+			Indigo.layout = Module.cwrap('indigoLayout', 'number', ['number']);
+		}
+		
+		function openInputFile(file)
+		{
+			if (file)
+			{
+			  var reader = new FileReader();
+			  reader.onload = function(e)
+				{
+					var content = reader.result;
+					$('textInput').value = content;
+					/*
+					var loopCount = parseInt($('inputLoopCount').value) || 1;
+					
+					// OpenBabel
+					var mol = loadMol(content, loopCount);
+					var s = saveMol(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+					$('textOutputMol').value = s;
+					var s = saveMol(mol, 'chemical/x-pdb', 'pdb', loopCount);
+					$('textOutputPdb').value = s;
+					//mol['delete']();
+					obMol = mol;
+					
+					// Kekule
+					var mol = loadMolKekule(content, loopCount);
+					var s = saveMolKekule(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+					$('textOutputMolKekule').value = s;
+					*/
+				};
+				reader.onerror = function()
+				{
+					console.error('Fail to load source file!');
+				}
+			  reader.readAsText(file);
+			}
+		}
+			
+		// Benchmark functions
+		var Benchmarks = {
+			canonicalSmiles: function canonicalSmiles(mol, loopCount)
+			{
+				var result;
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					result = Indigo.canonicalSmiles(mol);
+					if (!result)
+						return null;
+				}
+				return result;
+			},
+			layoutMol: function layoutMol(mol, loopCount)
+			{
+				var result;				
+				var smiles = Indigo.saveSmiles(mol);
+				Indigo.setOption("smart-layout", "true");
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					if (result)
+						Indigo.free(result);
+					//var mol2 = Indigo.clean2d(mol);
+					//console.log("After clean 2D");
+					//console.log(Indigo.saveMol(mol2));
+					//console.log('Now smiles', i, smiles);
+					var mol2 = Indigo.loadMoleculeFromString(smiles);
+					result = Indigo.layout(mol2);
+					if (result < 0)
+						return -1;
+					//console.log(result, mol);
+				}
+				return result;
+			},
+			sssrCount: function sssrCount(mol, loopCount)
+			{
+				var result;
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					Indigo.clearProperties(mol);
+					result = Indigo.countSSSR(mol);
+					if (result < 0)
+						return -1;
+				}
+				return result;
+			},
+			findTautomers: function findTautomers(mol, loopCount)
+			{
+				var result;
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					if (result)
+						Indigo.free(result);
+					result = Indigo.iterateTautomers(mol);
+					if (result < 0)
+						return -1;
+				}
+				return result;
+			},
+			saveToCml: function saveToCml(mol, loopCount)
+			{
+				var result;
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					result = Indigo.saveCml(mol);
+					if (!result)
+						return null;
+				}
+				return result;
+			},
+			saveToMol: function saveToMol(mol, loopCount)
+			{
+				var result;
+				for (var i = 0; i < (loopCount || 1); ++i)
+				{
+					result = Indigo.saveMol(mol);
+					if (!result)
+						return null;
+				}
+				return result;
+			}
+		};
+		
+		function loadMol(data)
+		{			
+			return Indigo.loadMoleculeFromString(data);
+		}
+		
+		function benchmarkItem(funcName, params, timeRecords, benchmarkName)
+		{
+			var func = Benchmarks[funcName];
+			var tStart = Date.now();
+			var result = func.apply(this, params);
+			var tEnd = Date.now();
+			var tElaspedTime = tEnd - tStart;
+			timeRecords.push({'benchmark': benchmarkName || funcName, 'execTime': tElaspedTime});
+			return result;
+		}
+		function runBenchmarks()
+		{
+			var mol;
+			var timeRecords = [];			
+			
+			// load molecule first
+			var sSrc = $('textInput').value;
+			mol = loadMol(sSrc);
+			var loopCount = parseInt($('inputLoopCount').value);
+			var molParams = [mol, loopCount];
+			
+			var canoSmiles = benchmarkItem('canonicalSmiles', molParams, timeRecords);
+			var layoutMol = benchmarkItem('layoutMol', molParams, timeRecords);
+			if (layoutMol)
+			{
+				Indigo.free(mol);
+				mol = layoutMol;
+				molParams = [mol, loopCount];
+			}
+			var sssrCount = benchmarkItem('sssrCount', molParams, timeRecords);
+			var iterTautomers = benchmarkItem('findTautomers', molParams, timeRecords);
+			var cmlData = benchmarkItem('saveToCml', molParams, timeRecords);
+			var molData = benchmarkItem('saveToMol', molParams, timeRecords);			
+			
+			// organize properties
+			var properties = ['SSSR Count: ' + sssrCount, 'Canonicalization SMILES: ' + canoSmiles];
+			
+			/*
+			var tautomerItem, index = 0;
+			//while (tautomerItem = Indigo.iteratorNext(iterTautomers))
+			while (Indigo.iteratorHasNext(iterTautomers))
+			{
+				tautomerItem = Indigo.iteratorNext(iterTautomers);
+				if (tautomerItem >= 0)
+				{
+					++index;
+					var mol2 = Indigo.clone(tautomerItem);
+					var tautomerSmiles = Indigo.canonicalSmiles(mol2);
+					properties.push('Tautomer ' + index + ': ' + tautomerSmiles);
+					Indigo.free(mol2);
+					Indigo.free(tautomerSmiles);
+				}
+			}
+			Indigo.free(iterTautomers);			
+			*/
+			
+			// output
+			$('textOutputMol').value = molData;
+			$('textOutputCml').value = cmlData;
+			$('textProperties').value = properties.join('\n');
+			
+			Indigo.free(mol);
+			
+			// output execution times
+			var logs = [];
+			timeRecords.forEach(function(item){
+				var s = 'Execute ' + item.benchmark + ' ' + loopCount + ' times in ' + item.execTime + ' ms';
+				logs.push(s);
+			});
+			logs.forEach(function(item){ console.log(item); });
+			$('textLogs').value = logs.join('\n');
+		}
+	</script>
+  </head>
+  <body onload="init()">
+    <header id="controller">
+	  <label>Open source file: <input type="file" id="inputSrcFile" /></label>
+	  <label>Exec loop count: <input type="text" id="inputLoopCount" value="100" /></label>
+	  <button id="btnExec">Execute</button>
+	</header>
+	<article id="stage">
+	  <section id="secInput">
+		<label for="textInput">Input data:</label><br />
+		<textarea id="textInput"></textarea>
+	  </section>
+	  <section id="secLogs">
+		<label for="textLogs">Logs:</label><br />
+		<textarea id="textLogs"></textarea>
+	  </section>
+	  <section id="secProperties">
+		<label for="textProperties">Properties:</label><br />
+		<textarea id="textProperties"></textarea>
+	  </section>
+	  <section id="secOutputMol">
+		<label for="textOutputMol">Output MOL data:</label><br />
+		<textarea id="textOutputMol"></textarea>
+	  </section>
+	  <section id="secOutputCml">
+		<label for="textOutputCml">Output CML data:</label><br />
+		<textarea id="textOutputCml"></textarea>
+	  </section>
+	  <!--
+	  <section id="secOutputMolKekule">
+		<label for="textOutputMolKekule">Output data in Kekule (MOL):</label><br />
+		<textarea id="textOutputMolKekule"></textarea>
+	  </section>
+	  -->
+	</article>
+  </body>
+ </html>

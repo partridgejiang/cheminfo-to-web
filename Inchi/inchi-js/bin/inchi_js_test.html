@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>InChI-JS Test</title>
+	
+	<script src="openbabel.js"></script>
+	<script src="inchiConv.js"></script>
+	
+	<style>
+	  #txtInputMol
+	  {
+	    display: block;
+	    width: 80em;
+		height: 25em;
+	  }
+	  #txtInputLoopCount
+	  {
+	    display: block;
+	    width: 80em;
+	  }
+	</style>	
+	<script>
+	  //var Module = {};
+	  var molToInchiJson;
+	  function wrapFuncs()
+	  {
+	    molToInchiJson = Module.cwrap('molToInchiJson', 'string', ['string', 'string']);		
+	  }
+	  function conv()
+	  {
+	    var inputMol = document.getElementById('txtInputMol').value;
+		var options = '';
+		var loopCount = parseInt(document.getElementById('txtInputLoopCount').value) || 1;
+		var tStart = Date.now()
+		for (var i = 0; i < loopCount; ++i)
+		{
+			var sResult = molToInchiJson(inputMol, options);
+			//console.log(i, sResult);
+		}
+		var tEnd = Date.now();
+		console.log(sResult);
+		var result = JSON.parse(sResult);
+		console.log(result);
+		console.log('Execute in ' + (tEnd - tStart) + ' ms');
+	  }
+	  
+	  function init()
+	  {
+	    wrapFuncs();
+	  }
+	</script>
+  </head>
+  <body onload="init()">
+	<textarea id="txtInputMol"></textarea>
+	<input type="text" id="txtInputLoopCount"></input>
+	<button id="btnExec" onclick="conv()">Conv</button>
+	<!--
+	<script>
+
+    var script = document.createElement('script');
+    script.src = "inchiConv.asm.js";
+    script.onload = function() {
+      setTimeout(function() {        
+          var script = document.createElement('script');
+          script.src = "inchiConv.js";
+		  script.onload = function() {
+			setTimeout(function(){
+			  init();
+			}, 1);
+		  }
+          document.body.appendChild(script);		  
+      }, 1); // delaying even 1ms is enough to allow compilation memory to be reclaimed
+    };
+    document.body.appendChild(script);
+	</script>
+	-->
+ </html>

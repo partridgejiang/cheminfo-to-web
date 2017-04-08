@@ -1,0 +1,3 @@
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/my_openbabel_test/cmake/CMakeFiles/edit_cache.dir
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/my_openbabel_test/cmake/CMakeFiles/rebuild_cache.dir
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/my_openbabel_test/cmake/CMakeFiles/conv.dir

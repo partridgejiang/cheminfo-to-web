@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/conv.dir/conv.cpp.o  -o conv -rdynamic libopenbabel.a 

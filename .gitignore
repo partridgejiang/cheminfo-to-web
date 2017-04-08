@@ -1,3 +1,13 @@
+# ignored directories
+/abinit
+/osra
+/psi4
+/Inchi/inchi-src
+/OpenBabel/OpenBabel-src
+/Indigo/Indigo-src
+/Gromacs
+
+
 # Compiled Object files
 *.slo
 *.lo

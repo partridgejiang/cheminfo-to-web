@@ -1,0 +1,4 @@
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/bin/CMakeFiles/edit_cache.dir
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/bin/CMakeFiles/rebuild_cache.dir
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/bin/CMakeFiles/gen3DRunner.dir
+/mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/bin/CMakeFiles/ioRunner.dir
