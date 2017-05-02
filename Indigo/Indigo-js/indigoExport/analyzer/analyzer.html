@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Indigo API Analyzer</title>
+    <link rel="stylesheet" href="analyzer.css" />
+  </head>
+  <body>
+    <section id="secInput">
+      <label for="memoApiSrc">Indigo API head source:</label><br />
+      <textarea id="memoApiSrc"></textarea>
+    </section>
+    <section id="secAnalyzer">
+      <button id="btnAnalysis" onclick="execute()">Analysis</button> <br />
+      <label for="memoResult">Result:</label><br />
+      <textarea id="memoResult"></textarea><br />
+      <label for="memoStatistics">Statistics:</label><br />
+      <textarea id="memoStatistics"></textarea>
+    </section>
+
+    <script src="analyzer.js"></script>
+    <script>
+      function execute()
+      {
+        var codes = $('memoApiSrc').value;
+        var funcInfo = analysis(codes);
+        var sOutput = JSON.stringify(funcInfo, null, 2);
+        $('memoResult').value = sOutput;
+        var typeInfo = summaryTypes(funcInfo);
+        $('memoStatistics').value = JSON.stringify(typeInfo, null, 2);
+      }
+    </script>
+  </body>
+</html>

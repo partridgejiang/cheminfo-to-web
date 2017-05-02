@@ -1,0 +1,6 @@
+textarea
+{
+    width: 80em;
+    height: 25em;
+    overflow: scroll;
+}
