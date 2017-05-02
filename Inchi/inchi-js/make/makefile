@@ -43,17 +43,25 @@ ifndef INCHI_EXECUTABLE_NAME
 		EXE =
 	endif
 	INCHI_EXECUTABLE_NAME = inchiConv$(EXE)
+	TEST_DATA_BUILDER_EXE_NAME = testDataBuilder$(EXE)
 endif
+
  # === executable directory ===
 ifndef BIN_DIR
   BIN_DIR = ../bin
 endif
-ifndef BIN_OBJ_DIR
-  BIN_OBJ_DIR = $(BIN_DIR)/obj
+ifdef EMCC
+  BIN_OBJ_DIR = $(BIN_DIR)/obj_emcc
+else
+  BIN_OBJ_DIR = $(BIN_DIR)/obj_native
 endif
 INCHI_EXECUTABLE_PATHNAME = $(BIN_DIR)/$(INCHI_EXECUTABLE_NAME)
+TEST_DATA_BUILDER_EXE_PATHNAME = $(BIN_DIR)/$(TEST_DATA_BUILDER_EXE_NAME)
 ifndef P_MAIN
 	P_MAIN = ../src
+endif
+ifndef P_TESTER
+	P_TESTER = ../test/src_cpp
 endif
 ifndef P_BASE
 	P_BASE = ../../inchi-src/INCHI-1-SRC/INCHI_BASE/src
@@ -74,7 +82,7 @@ ifdef windir
 	#CPP_COMPILER_OPTIONS = -c $(P_INCL) -D_LIB -O3 -frtti -Wall -pedantic -Wreturn-type -Wformat -Wuninitialized -ffunction-sections -fexpensive-optimizations -fstack-check -fexceptions -Wcast-align -Wshadow -Wunused -Wunused-value -Wunused-variable -Wunused-function -fsigned-char -Wcast-qual -Wconversion -Wmissing-braces -Wredundant-decls -Wsign-compare -Wfloat-equal -Wwrite-strings -mfancy-math-387 -mieee-fp -mno-soft-float
 else
 	#CPP_COMPILER_OPTIONS = $(P_INCL) -D_LIB -DTARGET_EXE_STANDALONE -ansi -O3 -frtti -c
-	CPP_COMPILER_OPTIONS = $(P_INCL) -D_LIB -DTARGET_API_LIB -ansi -O3 -frtti -c
+	CPP_COMPILER_OPTIONS = $(P_INCL) -D_LIB -DTARGET_API_LIB -ansi -O3 -frtti -c -std=c++11
 	#CPP_COMPILER_OPTIONS = -c $(P_INCL) -D_LIB -ansi -O3 -frtti -Wall -pedantic -Wreturn-type -Wformat -Wuninitialized -ffunction-sections -fexpensive-optimizations -fstack-check -fexceptions -Wcast-align -Wshadow -Wunused -Wunused-value -Wunused-variable -Wunused-function -fsigned-char -Wcast-qual -Wconversion -Wmissing-braces -Wredundant-decls -Wsign-compare -Wfloat-equal -Wwrite-strings -mfancy-math-387 -mieee-fp -mno-soft-float
 endif
 #LINKER_OPTIONS = -static-libgcc
@@ -136,75 +144,101 @@ $(P_MAIN)/inchi_conv.c
 # $(P_MAIN)/ichimain.c
 #
 INCHI_OBJS = \
-ichi_bns.o	\
-ichi_io.o	\
-ichicano.o	\
-ichican2.o	\
-ichicans.o	\
-ichierr.o	\
-ichiisot.o	\
-ichimake.o	\
-ichimak2.o	\
-ichimap1.o	\
-ichimap2.o	\
-ichimap4.o	\
-ichinorm.o	\
-ichiprt1.o	\
-ichiprt2.o	\
-ichiprt3.o	\
-ichiqueu.o	\
-ichiring.o	\
-ichisort.o	\
-ichister.o	\
-ichitaut.o	\
-ichiparm.o	\
-ichiread.o	\
-ichirvr1.o	\
-ichirvr2.o	\
-ichirvr3.o	\
-ichirvr4.o	\
-ichirvr5.o	\
-ichirvr6.o	\
-ichirvr7.o	\
-ikey_base26.o	\
-ikey_dll.o	\
-mol_fmt1.o	\
-mol_fmt2.o	\
-mol_fmt3.o	\
-mol_fmt4.o	\
-runichi.o	\
-runichi2.o	\
-runichi3.o	\
-runichi4.o	\
-sha2.o	\
-strutil.o	\
-util.o	\
-mol2atom.o	\
-readinch.o	\
-inchi_dll.o	\
-inchi_dll_a.o	\
-inchi_dll_a2.o	\
-inchi_dll_b.o	\
-inchi_dll_main.o	\
-inchi_js_utils.o	\
-inchi_conv.o
-#dispstru.o	\
-#ichimain.o  
-$(INCHI_EXECUTABLE_PATHNAME) : $(INCHI_OBJS)
-	$(LINKER) $(LINKER_OPTIONS) -o $(INCHI_EXECUTABLE_PATHNAME) $(INCHI_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION)
+$(BIN_OBJ_DIR)/ichi_bns.o	\
+$(BIN_OBJ_DIR)/ichi_io.o	\
+$(BIN_OBJ_DIR)/ichicano.o	\
+$(BIN_OBJ_DIR)/ichican2.o	\
+$(BIN_OBJ_DIR)/ichicans.o	\
+$(BIN_OBJ_DIR)/ichierr.o	\
+$(BIN_OBJ_DIR)/ichiisot.o	\
+$(BIN_OBJ_DIR)/ichimake.o	\
+$(BIN_OBJ_DIR)/ichimak2.o	\
+$(BIN_OBJ_DIR)/ichimap1.o	\
+$(BIN_OBJ_DIR)/ichimap2.o	\
+$(BIN_OBJ_DIR)/ichimap4.o	\
+$(BIN_OBJ_DIR)/ichinorm.o	\
+$(BIN_OBJ_DIR)/ichiprt1.o	\
+$(BIN_OBJ_DIR)/ichiprt2.o	\
+$(BIN_OBJ_DIR)/ichiprt3.o	\
+$(BIN_OBJ_DIR)/ichiqueu.o	\
+$(BIN_OBJ_DIR)/ichiring.o	\
+$(BIN_OBJ_DIR)/ichisort.o	\
+$(BIN_OBJ_DIR)/ichister.o	\
+$(BIN_OBJ_DIR)/ichitaut.o	\
+$(BIN_OBJ_DIR)/ichiparm.o	\
+$(BIN_OBJ_DIR)/ichiread.o	\
+$(BIN_OBJ_DIR)/ichirvr1.o	\
+$(BIN_OBJ_DIR)/ichirvr2.o	\
+$(BIN_OBJ_DIR)/ichirvr3.o	\
+$(BIN_OBJ_DIR)/ichirvr4.o	\
+$(BIN_OBJ_DIR)/ichirvr5.o	\
+$(BIN_OBJ_DIR)/ichirvr6.o	\
+$(BIN_OBJ_DIR)/ichirvr7.o	\
+$(BIN_OBJ_DIR)/ikey_base26.o	\
+$(BIN_OBJ_DIR)/ikey_dll.o	\
+$(BIN_OBJ_DIR)/mol_fmt1.o	\
+$(BIN_OBJ_DIR)/mol_fmt2.o	\
+$(BIN_OBJ_DIR)/mol_fmt3.o	\
+$(BIN_OBJ_DIR)/mol_fmt4.o	\
+$(BIN_OBJ_DIR)/runichi.o	\
+$(BIN_OBJ_DIR)/runichi2.o	\
+$(BIN_OBJ_DIR)/runichi3.o	\
+$(BIN_OBJ_DIR)/runichi4.o	\
+$(BIN_OBJ_DIR)/sha2.o	\
+$(BIN_OBJ_DIR)/strutil.o	\
+$(BIN_OBJ_DIR)/util.o	\
+$(BIN_OBJ_DIR)/mol2atom.o	\
+$(BIN_OBJ_DIR)/readinch.o	\
+$(BIN_OBJ_DIR)/inchi_dll.o	\
+$(BIN_OBJ_DIR)/inchi_dll_a.o	\
+$(BIN_OBJ_DIR)/inchi_dll_a2.o	\
+$(BIN_OBJ_DIR)/inchi_dll_b.o	\
+$(BIN_OBJ_DIR)/inchi_dll_main.o	\
+$(BIN_OBJ_DIR)/inchi_js_utils.o	\
+#$(BIN_OBJ_DIR)/dispstru.o	\
+#$(BIN_OBJ_DIR)/ichimain.o
+
+INCHI_EXE_OBJS =	\
+$(BIN_OBJ_DIR)/inchi_conv.o
+
+TEST_DATA_BUILDER_OBJS =	\
+$(BIN_OBJ_DIR)/testDataBuilder.o
+
+ALL_EXE_PATHNAMES = $(INCHI_EXECUTABLE_PATHNAME)
+ifndef EMCC
+	ALL_EXE_PATHNAMES += $(TEST_DATA_BUILDER_EXE_PATHNAME)
+endif
+
+all:createDirs exeTasks
+
+createDirs:
+	-mkdir ../bin
+	-mkdir ../bin/obj_native	
+	-mkdir ../bin/obj_emcc	
+	
+ifdef EMCC
+exeTasks: $(INCHI_EXECUTABLE_PATHNAME)
+else
+exeTasks: $(INCHI_EXECUTABLE_PATHNAME) $(TEST_DATA_BUILDER_EXE_PATHNAME)
+endif	
+
+$(INCHI_EXECUTABLE_PATHNAME) : $(INCHI_OBJS) $(INCHI_EXE_OBJS)
+	$(LINKER) $(LINKER_OPTIONS) -o $(INCHI_EXECUTABLE_PATHNAME) $(INCHI_OBJS) $(INCHI_EXE_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION)
+$(TEST_DATA_BUILDER_EXE_PATHNAME) : $(INCHI_OBJS) $(TEST_DATA_BUILDER_OBJS)
+	$(LINKER) $(LINKER_OPTIONS) -o $(TEST_DATA_BUILDER_EXE_PATHNAME) $(INCHI_OBJS) $(TEST_DATA_BUILDER_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION)
 # ichi_bns.o:
 #	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_BASE)/ichi_bns.c
 # inchi_dll.o:
 #	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_API)/inchi_dll.c
-inchi_js_utils.o:
-	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_MAIN)/inchi_js_utils.c $(EMCC_EXPORT_FUNC_UTILS)
-%.o: $(P_BASE)/%.c
-	$(C_COMPILER) $(C_COMPILER_OPTIONS) $<
-%.o: $(P_API)/%.c
-	$(C_COMPILER) $(C_COMPILER_OPTIONS) $<
-%.o: $(P_MAIN)/%.c
-	$(C_COMPILER) $(C_COMPILER_OPTIONS) $<
-%.o: $(P_MAIN)/%.c
-	$(C_COMPILER) $(C_COMPILER_OPTIONS) $<
+$(BIN_OBJ_DIR)/inchi_js_utils.o:
+	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_MAIN)/inchi_js_utils.c $(EMCC_EXPORT_FUNC_UTILS) -o $@
+$(BIN_OBJ_DIR)/%.o: $(P_BASE)/%.c
+	$(C_COMPILER) $(C_COMPILER_OPTIONS) $< -o $@
+$(BIN_OBJ_DIR)/%.o: $(P_API)/%.c
+	$(C_COMPILER) $(C_COMPILER_OPTIONS) $< -o $@
+$(BIN_OBJ_DIR)/%.o: $(P_MAIN)/%.c
+	$(C_COMPILER) $(C_COMPILER_OPTIONS) $< -o $@
+$(BIN_OBJ_DIR)/%.o: $(P_TESTER)/%.cpp
+	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 clean:
-	rm *.o
+	rm $(BIN_OBJ_DIR)/*.o

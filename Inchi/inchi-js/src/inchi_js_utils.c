@@ -74,7 +74,7 @@ char* molToInchiJson(char* molText, char* options)
              strSize, result.inchi, result.auxInfo, result.message, result.success);
     */
 
-    char* sResult = malloc(strSize);
+    char* sResult = (char*)malloc(strSize);
     snprintf(sResult, strSize,
              "{\"inchi\":\"%s\",\"auxInfo\":\"%s\",\"message\":\"%s\",\"success\":\"%s\"}",
              _concreateStr(inchiResult->szInChI), _concreateStr(inchiResult->szAuxInfo), _concreateStr(inchiResult->szMessage),
