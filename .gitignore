@@ -12,7 +12,9 @@
 /osra
 /Inchi/inchi-src
 /OpenBabel/OpenBabel-src
+/OpenBabel/my_openbabel_test
 /Indigo/Indigo-src
+/Indigo/my_indigo_test
 /OpenMD/OpenMD-src
 
 Indigo/Indigo-js/bin/output/*.*
