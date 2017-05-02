@@ -92,13 +92,15 @@ OB_DATA_SUBDIR = data/
 
 OB_DATA_FILES = \
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/bondtyp.txt@$(OB_DATA_SUBDIR)bondtyp.txt	\
-$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/ringtyp.txt@$(OB_DATA_SUBDIR)ringtyp.txt
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/ringtyp.txt@$(OB_DATA_SUBDIR)ringtyp.txt	\
+	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/element.txt@$(OB_DATA_SUBDIR)element.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/atomtyp.txt@$(OB_DATA_SUBDIR)atomtyp.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/types.txt@$(OB_DATA_SUBDIR)types.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/phmodel.txt@$(OB_DATA_SUBDIR)phmodel.txt	\
-#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope.txt@$(OB_DATA_SUBDIR)isotope.txt
+#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope.txt@$(OB_DATA_SUBDIR)isotope.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope-small.txt@$(OB_DATA_SUBDIR)isotope-small.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/fragments.txt@$(OB_DATA_SUBDIR)fragments.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/resdata.txt@$(OB_DATA_SUBDIR)resdata.txt	\
@@ -130,7 +132,7 @@ $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/ghemical.prm@$(OB_DATA_SUBDIR)ghemical.pr
 
 
 ifndef NATIVE
-  EMCC_EMBED_FILE_OPTION = $(OB_FF_DATA_FILES) #$(OB_DATA_FILES) # FF data files currently is bypass to reduce file size, normal data files usally can fall back to .h replacements
+  EMCC_EMBED_FILE_OPTION = $(OB_FF_DATA_FILES) $(OB_DATA_FILES) # FF data files currently is bypass to reduce file size, normal data files usally can fall back to .h replacements
 endif
 
 OB_BASE_SRCS =	\
