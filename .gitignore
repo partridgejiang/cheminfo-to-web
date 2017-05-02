@@ -2,11 +2,55 @@
 /abinit
 /osra
 /psi4
+/Gromacs
+/antioch
+/AutoDock
+/imago
+/mopac
+/NWChem
+/OpenMM
+/osra
 /Inchi/inchi-src
 /OpenBabel/OpenBabel-src
 /Indigo/Indigo-src
-/Gromacs
+/OpenMD/OpenMD-src
 
+Indigo/Indigo-js/bin/output/*.*
+Indigo/Indigo-js/bin/testData/*.*
+
+OpenBabel/OpenBabel_testDataBuilder/bin/data/*.*
+OpenBabel/OpenBabel_testDataBuilder/bin/output/*.*
+
+web.config
+
+#cmake files
+CMakeFiles
+*.cmake
+CMakeCache.txt
+
+#my deprecated files
+*.old
+*.OLD
+*.OLD*
+*.old*
+
+#some helper programes
+*.sh
+
+#calculation output files
+*.omd
+*.eor
+*.dump
+*.report
+*.stat
+*.result
+*.inc
+
+# Zip files
+*.rar
+*.tar
+*.tar.gz
+*.tgz
 
 # Compiled Object files
 *.slo

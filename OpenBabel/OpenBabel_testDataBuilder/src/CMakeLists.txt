@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.6)
+add_executable(ioBuilder ../../OpenBabel-js/src/embind/ObWrapper.cpp ../src/ioBuilder.cpp)
+#target_link_libraries(ioRunner openbabel)
+#target_link_libraries(ioRunner /home/ginger/programmer/openbabel-src/build-emcc/lib/libopenbabel.so)
+target_link_libraries(ioBuilder /home/ginger/programmer/openbabel-src/build/lib/libopenbabel.so)
+include_directories(/home/ginger/programmer/openbabel-src/src/include /home/ginger/programmer/openbabel-src/build/include)
