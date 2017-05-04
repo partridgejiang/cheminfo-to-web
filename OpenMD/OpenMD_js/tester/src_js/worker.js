@@ -1,6 +1,6 @@
-var Module = {
+var OpenMdModule = {
 	onRuntimeInitialized: function() {
-      //console.log('I am ready!');
+      console.log('I am ready!');
 	  moduleReady = true;
 	  if (suspendRun)
 	  {
@@ -17,6 +17,8 @@ var moduleReady = false;
 var suspendRun = false;
 
 importScripts('../../bin/openMD.js');
+
+var Module = OpenMdModule();
 
 var omdData, incData;
 onmessage = function(e)
@@ -39,13 +41,14 @@ onmessage = function(e)
 
 function execRunner()
 {
-	if (!moduleReady)  // wait util EMSCRIPTEN environment is ready
+	if (!Module && !moduleReady)  // wait util EMSCRIPTEN environment is ready
 	{
+		//console.log('suspend run');
 		suspendRun = true;
 		return;
 	}
 	else
-		suspendRun = false;
+		suspendRun = false;	
 		
 	var srcData = omdData;
 	var runner = new Module.OpenMdRunner();

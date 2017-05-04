@@ -9,7 +9,7 @@
 	<script type="text/javascript" src="./kekule/kekule.js?modules=io&openbabel"></script>	
 	-->
 	<script>
-	  Module = {logReadFiles: true};
+	  var Module;  // = {logReadFiles: true};
 	  function $(id)
 	  {
 	    return document.getElementById(id);
@@ -92,6 +92,7 @@
 		  console.log(inputSrc.files[0]);
 		  openInputFile(inputSrc.files[0]);
 		});
+		Module = OpenBabelModule({logReadFiles: true});
 	  }
 	</script>
   </head> 

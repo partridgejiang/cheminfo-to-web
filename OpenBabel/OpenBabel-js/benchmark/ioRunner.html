@@ -7,7 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="default.css" />
 	<script type="text/javascript" src="./kekule/kekule.js?modules=io"></script>
 	<script>
-	  var Module = {};
+	  var Module;
 	  var obMol;
 	  function $(id)
 	  {
@@ -146,6 +146,7 @@
 		  //console.log(inputSrc.files[0]);
 		  openInputFile(inputSrc.files[0]);
 		});
+		Module = OpenBabelModule();
 	  }
 	</script>
   </head> 

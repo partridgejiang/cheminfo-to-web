@@ -1,5 +1,6 @@
-TestUtils.loadScript('OpenBabel/OpenBabel-js/bin/openbabel.js');
-TestUtils.loadScript('_unitTest/_kekule/kekule.js?modules=io,algorithm,html,openbabel');
+var run = function() {
+
+var Module;
 
 TestUtils.registerEmccTestRunner(function runTest()
 {		
@@ -332,4 +333,11 @@ TestUtils.registerEmccTestRunner(function runTest()
 			}, 100000);
 		});
 	});	
-});
+}, 'OpenBabelModule');
+
+Module = OpenBabelModule();
+
+}
+
+TestUtils.loadScript('OpenBabel/OpenBabel-js/bin/openbabel.js', null, run);
+TestUtils.loadScript('_unitTest/_kekule/kekule.js?modules=io,algorithm,html,openbabel');

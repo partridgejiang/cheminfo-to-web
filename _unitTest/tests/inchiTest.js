@@ -1,12 +1,15 @@
-TestUtils.loadScript('Inchi/inchi-js/bin/inchiConv.js');
+TestUtils.loadScript('Inchi/inchi-js/bin/inchiConv.js', null, function(){
+
+//console.log(typeof InChI);
+var Module;
 
 TestUtils.registerEmccTestRunner(function runTest()
-{		
+{	
 	var TU = TestUtils;
 	
 	describe('Test of creating InChI from mol data', function()
 	{
-		it('Compare InChI result between native program and JS', function(done){
+		it('Compare InChI results between native program and JS', function(done){
 			TU.loadTestData('inchi/molsInChI.json', function(data, success){			
 				expect(data).not.toBeNull();
 				var contentObj = JSON.parse(data);
@@ -32,4 +35,8 @@ TestUtils.registerEmccTestRunner(function runTest()
 			});
 		});
 	});	
+}, 'InChIModule');
+
+Module = InChIModule();
+
 });

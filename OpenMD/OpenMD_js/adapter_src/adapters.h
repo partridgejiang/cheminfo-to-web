@@ -18,7 +18,7 @@ namespace OpenMD {
 		string getDumpData();
 		string getEorData();
 		string getReportData();
-		string getStatData();
+		string getStatData();		
 		int runOmdJob(string omdData);		
 	private:
 		const string defDataFileBaseName = "__omd_data__";

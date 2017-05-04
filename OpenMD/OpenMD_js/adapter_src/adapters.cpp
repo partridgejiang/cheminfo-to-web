@@ -147,6 +147,7 @@ namespace OpenMD {
 	{
 		return this->getOutputData("stat");
 	}
+	
 	// run OMD calculation job based on omdData, actually a modification of main function of OpenMD program
 	int OpenMdRunner::runOmdJob(string omdData)
 	{

@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="default.css" />	
 	<script async type="text/javascript" src="../../bin/indigo.js"></script>
 	<script>
+		var Module;
 		var Indigo = {};  // indigo namespace
 		function $(id)
 		{
@@ -14,7 +15,8 @@
 		}
 		function init()
 		{
-			Module.logReadFiles = true;
+			Module = IndigoModule({logReadFiles: true});
+			//Module.logReadFiles = true;
 			bindIndigoFuncs();
 			
 			var inputSrc = $('inputSrcFile');

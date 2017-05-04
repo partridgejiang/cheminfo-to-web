@@ -31,14 +31,14 @@ if (typeof(Module) === 'undefined')
 	
 	Module.print = function(text) 
 	{
-		if (Module._isInWorker())
+		if (Module._isInWorker() && typeof(console) === undefined)
 			postMessage({'msgType': 'log', 'msg': text});
 		else
 			console.log(text) 
 	};
 	Module.printErr = function(text) 
 	{
-		if (Module._isInWorker())
+		if (Module._isInWorker() && typeof(console) === undefined)
 			postMessage({'msgType': 'error', 'msg': text});
 		else
 			console.error(text) 

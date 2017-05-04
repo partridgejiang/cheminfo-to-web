@@ -1,11 +1,16 @@
-TestUtils.loadScript('Indigo/Indigo-js/bin/indigo.js');
-TestUtils.loadScript('Indigo/Indigo-js/bin/indigoAdapter.js');
+TestUtils.loadScript('Indigo/Indigo-js/bin/indigo.js', null, function(){
+	TestUtils.loadScript('Indigo/Indigo-js/bin/indigoAdapter.js', null, function(){
+		run();
+	});
+});
 //TestUtils.loadScript('_unitTest/_kekule/kekule.js?modules=io,algorithm,html,openbabel');
 
+var run = function()
+{
+var Indigo;
 TestUtils.registerEmccTestRunner(function runTest()
-{		
+{			
 	var TU = TestUtils;	
-	
 	// Extract ctab part of mol file data for comparison. Other part (e.g. name, creating time may change during output)
 	function extractCtabData(data, format)  
 	{
@@ -198,4 +203,8 @@ TestUtils.registerEmccTestRunner(function runTest()
 			}, 100000);
 		});
 	});
-});
+}, 'IndigoModule');
+
+Indigo = CreateIndigo(IndigoModule());
+
+}

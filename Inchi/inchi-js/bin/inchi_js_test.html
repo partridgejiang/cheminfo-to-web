@@ -21,7 +21,7 @@
 	  }
 	</style>	
 	<script>
-	  //var Module = {};
+	  var Module;
 	  var molToInchiJson;
 	  function wrapFuncs()
 	  {
@@ -47,6 +47,7 @@
 	  
 	  function init()
 	  {
+		Module = InChIModule();
 	    wrapFuncs();
 	  }
 	</script>

@@ -1,10 +1,14 @@
 var TestUtils = {
-	loadScript: function(url, doc)  // url based on project root dir
+	loadScript: function(url, doc, callback)  // url based on project root dir
 	{
 		if (!doc)
 			doc = document;
 		var src = '../' + url;
-		doc.write('<script type="text/javascript" src="'+src+'"><\/script>');
+		//doc.write('<script type="text/javascript" src="'+src+'"><\/script>');
+		var elem = doc.createElement('script');		
+		elem.onload = function(){ if (callback) callback(); };
+		elem.src = src;
+		(doc.body || doc.documentElement).appendChild(elem);
 	},
 	loadFile: function(url, callback)
 	{
@@ -43,12 +47,16 @@ var TestUtils = {
 				return function() {
 				  console.log('Ready to run test!');			  
 				  runner();
+				  //TestUtils.launchRunner();
 				};
 			})();
 			root[moduleName] = module;
 		}
 		else  // already created, can run test now
+		{
 			runner();
+			//TestUtils.launchRunner();
+		}
 	}
 
 })(this, TestUtils);

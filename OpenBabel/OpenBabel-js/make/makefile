@@ -4,8 +4,14 @@ ifndef NATIVE
 	CPP_COMPILER = emcc
 	LINKER = emcc -s
 	EXE_EXT = .js
+	
+	ifndef NO_MODULARIZE
+		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'OpenBabelModule'"
+	endif
+	
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
-	EMCC_MISC_OPTION =
+	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION)
+	#EMCC_MISC_OPTION = --separate-asm
 	LINKER_OPTIONS = --bind
 else
 	C_COMPILER = gcc

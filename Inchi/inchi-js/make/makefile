@@ -6,17 +6,21 @@ ifdef EMCC
 		CPP_COMPILER = emcc
 	endif
 	ifndef LINKER
-		LINKER = emcc -s
+		LINKER = emcc
 	endif	
 	ifndef EMCC_OPTIMIZE
 		EMCC_OPTIMIZE = -O3
 	endif
 	
+	ifndef NO_MODULARIZE
+		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'InChIModule'"
+	endif
+	
 	EMCC_EXPORT_FUNC_UTILS = -s EXPORTED_FUNCTIONS="['_molToInchiJson']"	
 	EMCC_EXPORT_FUNCS_ALL = -s EXPORTED_FUNCTIONS="['_molToInchiJson']"
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
-	EMCC_MISC_OPTION =
-	#EMCC_MISC_OPTION = --separate-asm	
+	EMCC_MISC_OPTION =  $(EMCC_MODULARIZE_OPTION)
+	#EMCC_MISC_OPTION = --separate-asm
 else
 	ifndef C_COMPILER
 		C_COMPILER   = gcc
@@ -25,7 +29,7 @@ else
 		CPP_COMPILER = g++
 	endif
 	ifndef LINKER
-		LINKER = g++ -s
+		LINKER = g++
 	endif	
 	
 	EMCC_OPTIMIZE =	
@@ -38,7 +42,8 @@ ifndef INCHI_EXECUTABLE_NAME
 	ifdef windir
 		EXE = .exe
 	else ifdef EMCC
-		EXE = .html
+		#EXE = .html
+		EXE = .js
 	else
 		EXE =
 	endif
