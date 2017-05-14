@@ -47,7 +47,11 @@ ifndef INCHI_EXECUTABLE_NAME
 	else
 		EXE =
 	endif
-	INCHI_EXECUTABLE_NAME = inchiConv$(EXE)
+	ifdef EMCC
+		INCHI_EXECUTABLE_NAME = inchi$(EXE)
+	else
+		INCHI_EXECUTABLE_NAME = inchiConv$(EXE)
+	endif
 	TEST_DATA_BUILDER_EXE_NAME = testDataBuilder$(EXE)
 endif
 

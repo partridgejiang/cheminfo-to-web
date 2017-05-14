@@ -1,4 +1,4 @@
-TestUtils.loadScript('Inchi/inchi-js/bin/inchiConv.js', null, function(){
+TestUtils.loadScript('Inchi/inchi-js/bin/inchi.js', null, function(){
 
 //console.log(typeof InChI);
 var Module;

@@ -76,7 +76,7 @@ TestUtils.registerEmccTestRunner(function runTest()
 				var tautomerSmiles = Indigo.canonicalSmiles(mol2);
 				result.push(tautomerSmiles);
 				Indigo.free(mol2);
-				Indigo.free(tautomerSmiles);
+				//Indigo.free(tautomerSmiles);
 			}
 		}
 		Indigo.free(iterator);			
