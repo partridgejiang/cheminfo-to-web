@@ -1,0 +1,5 @@
+In this project, we did some experimental work of porting a series of C/C++ chemoinformatics libraries into JavaScript via Emscripten. Such a method might be the fastest approach to bring existed native chemoinformatics softwares into web era, with only a little modification (or none at all) of source code and a recompiling process. The compiled result is highly optimized JavaScript code which can be run across different web browsers with fairly fast speed.
+
+Although compiled JS libraries are provided and can be downloaded directly in this project, it should be reminded that it is possible (and not difficult) to build your own JavaScript compilation of those libraries to adapt your own application, with different function exports, class bindings and so on. The build instructions can be found in readme files of each library.
+
+More details and demos can be found in our web page: https://partridgejiang.github.io/cheminfo-to-web/ .
