@@ -325,10 +325,10 @@ public:
 		int i = 0;
 		for (vector<std::string>::iterator iter=fmts.begin();iter!=fmts.end();iter++)
 		{
-			s = *iter;
-			result.append(s);
 			if (i != 0)
 				result.append(delimiter);
+			s = *iter;
+			result.append(s);			
 			++i;
 		}
 		return result;
@@ -341,10 +341,10 @@ public:
 		int i = 0;
 		for (vector<std::string>::iterator iter=fmts.begin();iter!=fmts.end();iter++)
 		{
-			s = *iter;
-			result.append(s);
 			if (i != 0)
 				result.append(delimiter);
+			s = *iter;
+			result.append(s);			
 			++i;
 		}
 		return result;
