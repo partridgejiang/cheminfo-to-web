@@ -142,7 +142,10 @@ function getJsWrapperForFuncs(funcNames, options)  // generate JS wrapper for c 
 	if (!options)
 		options = {};
 	var jsCodes = [];
-	var allFuncs = indigoApiData.funcs;
+	// enums
+	jsCodes.push(wrapIndigoEnums(options.rootNamespace, options.moduleName) + ',');
+	// functions
+	var allFuncs = indigoApiData.funcs;	
 	allFuncs.forEach(function(funcInfo){
 		var funcName = funcInfo.funcName;
 		if (funcNames.indexOf(funcName) >= 0)  // need to export this function
@@ -206,5 +209,67 @@ function getJsWrapperForFunc(funcInfo, jsFuncName, rootNamespace, moduleName)
 
 	result += ')' + sTailingMark;
 
+	return result;
+}
+
+function wrapIndigoEnums(rootNamespace, moduleName)
+{	
+	// whether namespace is used
+	var sConnector = rootNamespace? ': ': ' = ';
+	var sLeadingBlanks = rootNamespace? '\t': '';
+	var sTailingMark = rootNamespace? ',': ';';
+	// func names
+	var sIndentLeading = sLeadingBlanks + '\t';
+	var enumStrs = [];	
+	enumStrs.push(wrapIndigoEnum(null, {
+		// Reaction centers
+		INDIGO_RC_NOT_CENTER: -1,
+		INDIGO_RC_UNMARKED: 0,
+		INDIGO_RC_CENTER: 1,
+		INDIGO_RC_UNCHANGED: 2,
+		INDIGO_RC_MADE_OR_BROKEN: 4,
+		INDIGO_RC_ORDER_CHANGED: 8,
+		
+		// Molecule accessing
+		INDIGO_ABS: 1,
+		INDIGO_OR: 2,
+		INDIGO_AND: 3,
+		INDIGO_EITHER: 4,
+		INDIGO_UP: 5,
+		INDIGO_DOWN: 6,
+		INDIGO_CIS: 7,
+		INDIGO_TRANS: 8,
+		INDIGO_CHAIN: 9,
+		INDIGO_RING: 10,
+		INDIGO_ALLENE: 11,
+		INDIGO_SINGLET: 101,
+		INDIGO_DOUBLET: 102,
+		INDIGO_TRIPLET: 103		
+	}, sLeadingBlanks, sTailingMark, sConnector));
+		
+	return enumStrs.join(',\n');
+}
+
+function wrapIndigoEnum(enumName, enumValues, sLeadingBlanks, sTailingMark, sConnector)
+{
+	var result = '';	
+	var sIndentLeading = sLeadingBlanks;
+	var lines = [];
+	// Reaction cneters
+	if (enumName)
+	{
+		sIndentLeading = sLeadingBlanks + '\t';
+		lines.push(sLeadingBlanks + enumName + sConnector + '{');
+	}
+	var propNames = Object.getOwnPropertyNames(enumValues);	
+	propNames.forEach(function(name){
+		var value = enumValues[name];
+		lines.push(sIndentLeading + name + sConnector + JSON.stringify(value));
+	});	
+	if (enumName)
+	{
+		lines.push(sLeadingBlanks + '}' + sTailingMark);
+	}
+	result = lines.join(',\n');
 	return result;
 }
