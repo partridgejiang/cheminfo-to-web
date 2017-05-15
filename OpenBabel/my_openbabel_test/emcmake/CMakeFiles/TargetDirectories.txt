@@ -1,3 +1,0 @@
-/home/ginger/programmer/my_openbabel_test/emcmake/CMakeFiles/edit_cache.dir
-/home/ginger/programmer/my_openbabel_test/emcmake/CMakeFiles/rebuild_cache.dir
-/home/ginger/programmer/my_openbabel_test/emcmake/CMakeFiles/conv.dir

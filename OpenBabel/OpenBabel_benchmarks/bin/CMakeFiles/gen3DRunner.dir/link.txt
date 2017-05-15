@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/gen3DRunner.dir/ObWrapper.cpp.o CMakeFiles/gen3DRunner.dir/gen3DRunner.cpp.o  -o gen3DRunner -rdynamic /home/ginger/programmer/openbabel-src/build/lib/libopenbabel.so -Wl,-rpath,/home/ginger/programmer/openbabel-src/build/lib 

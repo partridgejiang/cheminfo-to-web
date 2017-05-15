@@ -1,0 +1,88 @@
+@charset "utf-8";
+/* CSS Document */
+
+a#logo
+{
+	background: #fff url(images/logo.png) no-repeat;
+}
+
+.MainHeader, .MainContent, .MainFooter
+{	
+	width: 900px;	
+}
+
+.MainContent article
+{
+	margin-right: 170px;
+}
+
+table.ExplanationTable
+{
+	border-collapse: collapse;
+}
+table.ExplanationTable td,
+table.ExplanationTable th
+{
+	border: 1px solid #555;
+	padding: 0.2em 0.5em;
+}
+
+table.ExplanationTable th
+{
+	background-color: #000;
+	color: #fff;
+	padding: 0.2em;
+}
+
+table.ExplanationTable ul
+{
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.CodeBlock, .InlineCode
+{
+		font-family: "Courier New", Courier, monospace;
+		/*white-space: pre-wrap;*/
+		white-space: no-wrap;
+}
+.CodeBlock
+{    
+    display: block;
+		margin: 0 2em;
+    padding: 0.5em 1em;
+    border: 1px dotted #ccc;
+    border-radius: 0.2em;
+    background-color: #eee;
+		overflow-x: auto;
+		-webkit-tab-size: 2;
+		-moz-tab-size: 2;
+		-o-tab-size: 2;
+		tab-size: 2;
+}
+.InlineCode
+{
+	display: inline;
+}
+
+.TutorialHead
+{
+	display: block;
+	padding: 0.1em 0.3em;
+	margin: 0;
+	font-size: 90%;
+	color: #888;
+	border-bottom: 1px dotted #ccc;
+}
+.TutorialHead a
+{
+	font-style: italic;
+	color: #888;
+	text-decoration: none;
+}
+.TutorialHead a:hover
+{
+	text-decoration: underline;
+}

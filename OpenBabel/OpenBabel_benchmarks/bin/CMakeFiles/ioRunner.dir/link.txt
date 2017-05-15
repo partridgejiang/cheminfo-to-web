@@ -1,1 +1,0 @@
-/usr/bin/c++      CMakeFiles/ioRunner.dir/ObWrapper.cpp.o CMakeFiles/ioRunner.dir/ioRunner.cpp.o  -o ioRunner -rdynamic /home/ginger/programmer/openbabel-src/build/lib/libopenbabel.so -Wl,-rpath,/home/ginger/programmer/openbabel-src/build/lib 

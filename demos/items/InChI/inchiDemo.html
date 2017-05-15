@@ -1,0 +1,124 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/DemoTemplate.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+	<meta charset="utf-8">
+	<!-- InstanceBeginEditable name="doctitle" -->
+	<title>InChI Demo - Cheminf-to-web Project</title>
+	<!-- InstanceEndEditable -->
+	<link href="../../../styles/base.css" rel="stylesheet" type="text/css">	
+	
+	<link href="../../../styles/default.css" rel="stylesheet" type="text/css">
+	
+	<link href="../../../styles/demos.css" rel="stylesheet" type="text/css">
+	<script src="../../scripts/demoUtils.js"></script>	
+	<!-- InstanceBeginEditable name="demoHead" -->
+	<link href="../../../libs/kekule/themes/default/kekule.css" rel="stylesheet" type="text/css">
+	<script src="../../../libs/compiled/inchi.js"></script>
+	<script src="../../../libs/raphael-min.2.0.1.js"></script>
+	<script src="../../../libs/kekule/kekule.js?modules=io,chemWidget"></script>
+	<script>
+		window.onload = function()
+		{
+			var inchiModule = InChIModule();  // Get root module of InChI lib
+			var molToInchiJson = inchiModule.cwrap('molToInchiJson', 'string', ['string', 'string']);  // wrap function
+			
+			var listElem = $('listMol');
+			var textAreaSrc = $('textAreaSrc');
+			var viewerElem = $('chemViewer');
+			DemoUtils.initMolList(listElem, {'textArea': textAreaSrc, 'viewer': viewerElem});
+			var filePickerElem = $('filePicker');
+			DemoUtils.assocFilePickerRelatedElems(filePickerElem, {'contentDisplayer': textAreaSrc, 'molViewer': viewerElem});
+			var textAreaResult = $('textAreaResult');
+			var btnExec = $('btnExec');
+			btnExec.onclick = function()
+			{
+				var molData = textAreaSrc.value;  // Set input MDL MOL format data here
+				var resultStr = molToInchiJson(molData, '');   // return a JSON format string
+				var details = JSON.parse(resultStr);   // parse the JSON
+				textAreaResult.value = 'Success: ' + details.success + '\n' + 'InChI: ' + details.inchi + '\n' + 'AuxInfo: ' + details.auxInfo;
+			}
+		}
+	</script>
+	<!-- InstanceEndEditable -->
+	
+	
+</head>
+
+<body>
+	<header class="MainHeader" id="mainHeader">
+		<h1 class="HeadTitle">Cheminf-to-web Project</h1>
+		<nav class="MainNav" id="mainNav">			
+			
+			<a id="logo"  href="../../../index.html" title="Project Home"><span>Cheminf-to-web</span></a>
+			<a href="../../../index.html">Overview</a>
+			<a href="../../index.html" target="_blank">Demos</a>
+			<!--
+			<a href="../documents/tutorial/index.html" target="_blank">Tutorial</a>
+			<a href="../documents/index.html">Documents</a>
+			-->
+			<a href="../../../download/index.html">Download</a>
+			<!-- InstanceBeginEditable name="AdditionalMainNavItems" -->
+			<!-- InstanceEndEditable -->			
+						
+		</nav>
+	</header>	
+	<section class="MainContent" id="mainContent">    			
+		
+			<nav class="SideNav">				
+				<a href="../../../index.html">Overview</a>
+				<a href="../../index.html">Demos</a>
+				<!--
+				<a href="../documents/tutorial/index.html" target="_blank">Tutorial</a>
+				<a href="../documents/index.html">Documents</a>
+				-->
+				<a href="../../../download/index.html">Download</a>
+				<!-- InstanceBeginEditable name="SideNavContent" -->
+				<!-- InstanceEndEditable -->						
+			</nav>
+						
+		<article id="mainArticle" class="MainArticle">			
+			<header>
+				<!-- InstanceBeginEditable name="PossibleGroupSection" -->
+				<!-- InstanceEndEditable -->				
+				<h1 class="MainTitle" id="mainTitle"><!-- InstanceBeginEditable name="ArticleHeadLine" -->InChI Demo<!-- InstanceEndEditable --></h1>
+			</header>		
+			<!-- InstanceBeginEditable name="MainContent" -->
+			<p>In our compiled InChI  library, a wrapper C function, molToInchiJson is   provided to convert MDL MOL format molecule data into InChI. Firstly, you should call cwrap function to wrap this function into JavaScript one:</p>
+			<pre class="CodeBlock">
+var inchiModule = InChIModule();  // Get root module of InChI lib
+var molToInchiJson = inchiModule.cwrap('molToInchiJson', 'string', ['string', 'string']);  // wrap function</pre>
+			<p>Then use it to get InChI information from MDL MOL format data:</p>
+			<pre class="CodeBlock">var molData = '...';  // Set input MDL MOL format data here
+var options = '';  // InChI conversion option string, same as the one in C API
+var resultStr = molToInchiJson(molData, options);   // return a JSON format string
+var details = JSON.parse(resultStr);   // parse the JSON
+console.log('InChI: ' + details.inchi, 'AuxInfo' + details.auxInfo);  // output
+			</pre>
+			<p>Live demo:</p>
+			<section class="DemoSection">
+				<p>
+					<label for="listMol">Select molecule: </label><select id="listMol"></select><br />
+					<label for="filePicker">Or load local MDL MOL format file: </label><input type="file" id="filePicker" />
+				</p>
+				<div id="srcStage">
+					<label for="textAreaSrc">Source data:</label><br />
+					<textarea id="textAreaSrc" class="DemoTextArea" style="width:60%;height:150px;"></textarea>
+					<div id="chemViewer" class="MolViewer" style="width:30%;height:150px;" data-widget="Kekule.ChemWidget.Viewer2D" data-predefined-setting="basic"></div>
+				</div> 
+				<p>
+					<button id="btnExec" data-widget="Kekule.Widget.Button">Get InChI</button>
+				</p>
+				<div id="resultStage">
+					<label for="textAreaResult">Output:</label><br />
+					<textarea id="textAreaResult" class="DemoBlockTextArea" style="width:90%;height:150px;"></textarea>
+				</div>
+			</section>
+			<h2></h2>
+			<!-- InstanceEndEditable -->
+		</article>
+	</section>
+	<footer class="MainFooter" id="mainFooter">
+		<span>Copyright 2017 Kekule.js Lab</span>
+	</footer>
+</body>
+<!-- InstanceEnd --></html>
