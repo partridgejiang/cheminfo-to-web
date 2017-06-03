@@ -75,7 +75,7 @@
 				<h1 class="MainTitle" id="mainTitle"><!-- InstanceBeginEditable name="ArticleHeadLine" -->OpenMD Demo<!-- InstanceEndEditable --></h1>
 			</header>		
 			<!-- InstanceBeginEditable name="MainContent" -->
-			<p>Molecular dynamics calculation often requires a lot of time, from minutes to hours, even days. So OpenMD JS library should not be used in the main thread, or it will surely block the web browser UI. Web worker is the ideal circumstance to run OpenMD calculation while data can be transfered between web worker and main thread by message.</p>
+			<p>Molecular dynamics calculation often requires a lot of time, from minutes to hours, even days. So OpenMD JS library should not be used in the main thread, or it will surely block the web browser UI. Web worker is the ideal circumstance to run OpenMD calculation while data can be transferred between web worker and main thread by messages.</p>
 			<p>In the main thread JS file, a extra web worker should firstly be created:</p>
 			<pre class="CodeBlock">
 var openMdWorker = new Worker('worker.js');  // load worker js file and create the OpenMD worker

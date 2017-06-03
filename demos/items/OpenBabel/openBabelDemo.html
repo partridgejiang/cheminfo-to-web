@@ -15,10 +15,11 @@
 	<link href="../../../libs/kekule/themes/default/kekule.css" rel="stylesheet" type="text/css">
 	<script src="../../../libs/compiled/openbabel.js"></script>
 	<script src="../../../libs/raphael-min.2.0.1.js"></script>	
-	<!--
+	<script src="../../../libs/Three.js"></script>	
 	<script src="../../../libs/kekule/kekule.js?modules=io,chemWidget,openbabel"></script>		
-	-->
+	<!--
 	<script src="file:///F|/Users/Ginger/Programer/Project/MolGraphics/WebBasedGraphics_Kekule/Kekule/project/src/kekule.js?min=false&modules=io,chemWidget,openbabel"></script>	
+	-->
 	<script>
 		window.onload = function()
 		{
@@ -231,6 +232,48 @@
 			{
 				doConversion(modifyMol);
 			}
+			
+			var inputFFMolListElem = $('listInputMolFF');
+			DemoUtils.initMolList(inputFFMolListElem, {'textArea': $('textAreaInDataFF'), 'viewer': $('chemViewerInputFF')}, demoMol3DData);
+			
+			var filePickerInputFFElem = $('filePickerInputFF');
+			DemoUtils.assocFilePickerRelatedElems(filePickerInputFFElem, {'contentDisplayer': $('textAreaInDataFF'), 'molViewer': $('chemViewerInputFF')});
+			
+			btnRunFF.onclick = function()
+			{
+				var kMol = Kekule.Widget.getWidgetById('chemViewerInputFF').getChemObj();
+				if (kMol)
+				{
+					var mol = Kekule.OpenBabel.AdaptUtils.kObjToOB(kMol);
+					try
+					{
+						//mol.AddHydrogens(null);
+						var FF = new OpenBabel.OBForceField.FindForceField("ghemical");
+						try
+						{
+							FF.SetLogLevel(3); // OBFF_LOGLVL_HIGH
+							if (!FF.Setup(mol))
+								console.log('Error set force field');
+							var sUnit = FF.GetUnit();
+							$('textAreaOutDataFF').value = 'Molecule total energy: ' + FF.Energy(true) + sUnit + '\n'
+								+ '  Bond stretching energy: ' + FF.E_Bond(true) + sUnit + '\n'
+								+ '  Angle bending energy: ' + FF.E_Angle(true) + sUnit + '\n'
+								+ '  Stretch bending energy: ' + FF.E_StrBnd(true) + sUnit + '\n'
+								+ '  Torsional energy: ' + FF.E_Torsion(true) + sUnit + '\n'
+								+ '  Out-Of-Plane bending energy: ' + FF.E_OOP(true) + sUnit + '\n'
+								+ '  Van der Waals energy: ' + FF.E_VDW(true) + sUnit + '\n'
+								+ '  Electrostatic energy: ' + FF.E_Electrostatic(true) + sUnit + '\n';
+						}
+						finally
+						{
+						}
+					}
+					finally
+					{
+						mol.delete();
+					}
+				}
+			}
 		}
 	</script>
 	<!-- InstanceEndEditable -->
@@ -372,6 +415,36 @@ for (var i = 0; i &lt; atomCount; ++i)
 				<br />
 				<textarea id="textAreaOutData" class="DemoTextArea" style="width:60%;height:150px;"></textarea>
 				<div id="chemViewerOutput" class="MolViewer" style="width:30%;height:150px;" data-widget="Kekule.ChemWidget.Viewer2D" data-predefined-setting="basic"></div>
+			</section>
+			<h2>Force Field Calculation</h2>
+			<p>Aside from molecule I/O, Open Babel supports molecular modeling to some degree. The core class <span class="InlineCode">OBForceField</span> is also exported in current JavaScript compilation. It can be called in a similar way to native C++ code. For example, the following codes calculate the energy of a molecule (the JavaScript codes are actaully borrowed from C++ code from obenergy program of OpenBabel):</p>
+			<pre class="CodeBlock">var FF = new OpenBabel.OBForceField.FindForceField("ghemical");
+FF.SetLogLevel(3); // OBFF_LOGLVL_HIGH
+if (!FF.Setup(mol))
+	console.log('Error set force field');
+var sUnit = FF.GetUnit();
+var msg = 'Molecule total energy: ' + FF.Energy(true) + sUnit + '\n'
+	+ '  Bond stretching energy: ' + FF.E_Bond(true) + sUnit + '\n'
+	+ '  Angle bending energy: ' + FF.E_Angle(true) + sUnit + '\n'
+	+ '  Stretch bending energy: ' + FF.E_StrBnd(true) + sUnit + '\n'
+	+ '  Torsional energy: ' + FF.E_Torsion(true) + sUnit + '\n'
+	+ '  Out-Of-Plane bending energy: ' + FF.E_OOP(true) + sUnit + '\n'
+	+ '  Van der Waals energy: ' + FF.E_VDW(true) + sUnit + '\n'
+	+ '  Electrostatic energy: ' + FF.E_Electrostatic(true) + sUnit + '\n';
+console.log(msg);
+			</pre>
+			<p>Live demo:</p>
+			<section class="DemoSection">
+				<p>
+					<label for="listInputMolFF">Select source molecule data: </label><select id="listInputMolFF"></select><br />
+					<label for="filePickerInputFF">Or load source data from file: </label><input type="file" id="filePickerInputFF" />
+				</p>
+				<textarea id="textAreaInDataFF" class="DemoTextArea" style="width:60%;height:150px;"></textarea>
+				<div id="chemViewerInputFF" class="MolViewer" style="width:30%;height:150px;" data-widget="Kekule.ChemWidget.Viewer3D" data-predefined-setting="basic"></div>
+				<br />
+				<button id="btnRunFF" data-widget="Kekule.Widget.Button">Calculate Energy</button>
+				<br />
+				<textarea id="textAreaOutDataFF" class="DemoTextArea" style="height:150px;"></textarea>
 			</section>
 			<!-- InstanceEndEditable -->
 		</article>
