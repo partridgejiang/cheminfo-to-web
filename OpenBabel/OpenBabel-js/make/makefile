@@ -10,7 +10,7 @@ ifndef NATIVE
 	endif
 	
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
-	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION)
+	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION) -s ASSERTIONS=0
 	#EMCC_MISC_OPTION = --separate-asm
 	LINKER_OPTIONS = --bind
 else
@@ -100,12 +100,13 @@ OB_DATA_FILES = \
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/bondtyp.txt@$(OB_DATA_SUBDIR)bondtyp.txt	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/ringtyp.txt@$(OB_DATA_SUBDIR)ringtyp.txt	\
 	\
-$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt
-#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/element.txt@$(OB_DATA_SUBDIR)element.txt	\
-#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/atomtyp.txt@$(OB_DATA_SUBDIR)atomtyp.txt	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt	\
+	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/atomtyp.txt@$(OB_DATA_SUBDIR)atomtyp.txt	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/element.txt@$(OB_DATA_SUBDIR)element.txt	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/types.txt@$(OB_DATA_SUBDIR)types.txt	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/phmodel.txt@$(OB_DATA_SUBDIR)phmodel.txt
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt	\
-#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/types.txt@$(OB_DATA_SUBDIR)types.txt	\
-#$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/phmodel.txt@$(OB_DATA_SUBDIR)phmodel.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope.txt@$(OB_DATA_SUBDIR)isotope.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope-small.txt@$(OB_DATA_SUBDIR)isotope-small.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/fragments.txt@$(OB_DATA_SUBDIR)fragments.txt	\
