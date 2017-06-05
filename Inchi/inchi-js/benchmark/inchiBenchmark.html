@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>InChI-Js Benchmarks</title>
+	<link rel="stylesheet" type="text/css" href="default.css" />	
+	<script async type="text/javascript" src="../bin/inchi.js"></script>
+	<script>
+		var Module;
+		
+		var molToInchiJson;
+		function wrapFuncs()
+		{
+			molToInchiJson = Module.cwrap('molToInchiJson', 'string', ['string', 'string']);		
+		}
+		function conv()
+		{
+			var inputMol = document.getElementById('textInput').value;
+			var options = '';
+			var loopCount = parseInt(document.getElementById('inputLoopCount').value) || 1;
+			var tStart = Date.now()
+			for (var i = 0; i < loopCount; ++i)
+			{
+				var sResult = molToInchiJson(inputMol, options);
+				//console.log(i, sResult);
+			}
+			var tEnd = Date.now();
+			var msg = '';
+			//console.log(sResult);
+			msg += sResult + '\n';
+			var result = JSON.parse(sResult);
+			console.log(result);
+			//msg += result + '\n';
+			msg += 'Execute in ' + (tEnd - tStart) + ' ms';
+			//console.log('Execute in ' + (tEnd - tStart) + ' ms');
+			console.log(msg);
+			$('textLogs').value = msg;
+		}
+
+		function init()
+		{
+			Module = InChIModule();
+			wrapFuncs();
+		}
+		
+		function $(id)
+		{
+			return document.getElementById(id);
+		}
+		function init()
+		{
+			Module = InChIModule();
+			//Module.logReadFiles = true;
+			wrapFuncs();
+			
+			var inputSrc = $('inputSrcFile');
+			inputSrc.addEventListener('change', function(e){			  
+				openInputFile(inputSrc.files[0]);
+			});
+			$('btnExec').addEventListener('click', function(e){
+				conv();
+			});
+		}		
+		
+		function openInputFile(file)
+		{
+			if (file)
+			{
+			  var reader = new FileReader();
+			  reader.onload = function(e)
+				{
+					var content = reader.result;
+					$('textInput').value = content;
+					/*
+					var loopCount = parseInt($('inputLoopCount').value) || 1;
+					
+					// OpenBabel
+					var mol = loadMol(content, loopCount);
+					var s = saveMol(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+					$('textOutputMol').value = s;
+					var s = saveMol(mol, 'chemical/x-pdb', 'pdb', loopCount);
+					$('textOutputPdb').value = s;
+					//mol['delete']();
+					obMol = mol;
+					
+					// Kekule
+					var mol = loadMolKekule(content, loopCount);
+					var s = saveMolKekule(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+					$('textOutputMolKekule').value = s;
+					*/
+				};
+				reader.onerror = function()
+				{
+					console.error('Fail to load source file!');
+				}
+			  reader.readAsText(file);
+			}
+		}
+	</script>
+  </head>
+  <body onload="init()">
+    <header id="controller">
+	  <label>Open source file: <input type="file" id="inputSrcFile" /></label>
+	  <label>Exec loop count: <input type="text" id="inputLoopCount" value="100" /></label>
+	  <button id="btnExec">Execute</button>
+	</header>
+	<article id="stage">
+	  <section id="secInput">
+		<label for="textInput">Input data:</label><br />
+		<textarea id="textInput"></textarea>
+	  </section>
+	  <section id="secLogs">
+		<label for="textLogs">Logs:</label><br />
+		<textarea id="textLogs"></textarea>
+	  </section>
+	</article>
+  </body>
+ </html>

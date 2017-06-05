@@ -103,19 +103,24 @@
 				Indigo.setOption("smart-layout", "true");
 				for (var i = 0; i < (loopCount || 1); ++i)
 				{
-					if (result)
-						Indigo.free(result);
+					if (mol2)
+						Indigo.free(mol2);
 					//var mol2 = Indigo.clean2d(mol);
 					//console.log("After clean 2D");
 					//console.log(Indigo.saveMol(mol2));
 					//console.log('Now smiles', i, smiles);
 					var mol2 = Indigo.loadMoleculeFromString(smiles);
 					result = Indigo.layout(mol2);
+					/*
 					if (result < 0)
-						return -1;
+						return 0;
+					*/
 					//console.log(result, mol);
 				}
-				return result;
+				if (result < 0)
+					return 0;
+				else
+					return mol2; //result;
 			},
 			sssrCount: function sssrCount(mol, loopCount)
 			{

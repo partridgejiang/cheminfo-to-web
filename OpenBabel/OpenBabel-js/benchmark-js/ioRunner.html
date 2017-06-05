@@ -25,6 +25,8 @@
 				$('textInput').value = content;
 				var loopCount = parseInt($('inputLoopCount').value) || 1;
 				
+				clearLog();
+				
 				// OpenBabel
 				var mol = loadMol(content, loopCount);
 				var s = saveMol(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
@@ -74,7 +76,9 @@
 		_obConv['delete']();
 		  
 		//console.log(obObj);
-		console.log('Run read MOL ' + loopCount + ' times in ', tEnd - tStart, ' ms');
+		var msg = 'Run read MOL ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
 		return obObj;
 	  }
 	  function saveMol(mol, mimeType, fileExt, loopCount)
@@ -90,7 +94,10 @@
 		var tEnd = Date.now();
 		_obConv['delete']();
 		
-		console.log('Run write ' + mimeType + ' ' + loopCount + ' times in ', tEnd - tStart, ' ms');
+		var msg = 'Run write ' + mimeType + ' ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
+		
 		return content;
 	  }
 	  function loadMolKekule(data, loopCount)
@@ -108,7 +115,9 @@
 		  mol = reader.readData(data, null, 'mol');
 		}
 		var tEnd = Date.now();		
-		console.log('Run read MOL in Kekule.js ' + loopCount + ' times in ', tEnd - tStart, ' ms');
+		var msg = 'Run read MOL in Kekule.js ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
 		
 		mol.getSrcInfo().data = '';  // clear data, avoid affect write
 		return mol;
@@ -133,8 +142,19 @@
 		}
 		var tEnd = Date.now();		
 		
-		console.log('Run write ' + mimeType + ' in Kekule.js ' + loopCount + ' times in ', tEnd - tStart, ' ms');
+		var msg = 'Run write ' + mimeType + ' in Kekule.js ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
 		return s;
+	  }
+	  
+	  function clearLog()
+	  {
+		$('textLog').value = '';
+	  }
+	  function addLog(str)
+	  {
+		$('textLog').value += str + '\n';
 	  }
 	  
 	  function init()
@@ -159,6 +179,10 @@
 	  <section id="secInput">
 		<label for="textInput">Input data:</label><br />
 		<textarea id="textInput"></textarea>
+	  </section>
+	  <section id="secLog">
+		<label for="textLog">Output data in OpenBabel (MOL):</label><br />
+		<textarea id="textLog"></textarea>
 	  </section>
 	  <section id="secOutputMol">
 		<label for="textOutputMol">Output data in OpenBabel (MOL):</label><br />
