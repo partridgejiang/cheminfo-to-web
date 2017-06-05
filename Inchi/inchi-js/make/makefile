@@ -239,6 +239,8 @@ $(TEST_DATA_BUILDER_EXE_PATHNAME) : $(INCHI_OBJS) $(TEST_DATA_BUILDER_OBJS)
 #	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_BASE)/ichi_bns.c
 # inchi_dll.o:
 #	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_API)/inchi_dll.c
+$(BIN_OBJ_DIR)/util.o:
+	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_MAIN)/util.c -o $@
 $(BIN_OBJ_DIR)/inchi_js_utils.o:
 	$(C_COMPILER) $(C_COMPILER_OPTIONS) $(P_MAIN)/inchi_js_utils.c $(EMCC_EXPORT_FUNC_UTILS) -o $@
 $(BIN_OBJ_DIR)/%.o: $(P_BASE)/%.c

@@ -23,6 +23,8 @@ Indigo/Indigo-js/bin/testData/*.*
 OpenBabel/OpenBabel_testDataBuilder/bin/data/*.*
 OpenBabel/OpenBabel_testDataBuilder/bin/output/*.*
 
+/_instructTests
+
 web.config
 
 #cmake files
