@@ -339,5 +339,5 @@ Module = OpenBabelModule();
 
 }
 
-TestUtils.loadScript('OpenBabel/OpenBabel-js/bin/openbabel.js', null, run);
-TestUtils.loadScript('_unitTest/_kekule/kekule.js?modules=io,algorithm,html,openbabel');
+TestUtils.loadScript('openbabel.js', null, run);
+TestUtils.loadScript('../_kekule/kekule.js?modules=io,algorithm,html,openbabel');

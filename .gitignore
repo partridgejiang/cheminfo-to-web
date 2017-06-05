@@ -36,6 +36,11 @@ CMakeCache.txt
 *.OLD*
 *.old*
 
+#special compiled files
+*.O3
+*.O2
+*.preload.*
+
 #some helper programes
 *.sh
 

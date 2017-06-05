@@ -1,5 +1,5 @@
-TestUtils.loadScript('Indigo/Indigo-js/bin/indigo.js', null, function(){
-	TestUtils.loadScript('Indigo/Indigo-js/bin/indigoAdapter.js', null, function(){
+TestUtils.loadScript(/*'Indigo/Indigo-js/bin/indigo.js'*/'indigo.js', null, function(){
+	TestUtils.loadScript(/*'Indigo/Indigo-js/bin/indigoAdapter.js'*/'indigoAdapter.js', null, function(){
 		run();
 	});
 });

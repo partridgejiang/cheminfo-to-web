@@ -3,7 +3,7 @@ var TestUtils = {
 	{
 		if (!doc)
 			doc = document;
-		var src = '../' + url;
+		var src = /*'../' +*/ '_libs/' + url;
 		//doc.write('<script type="text/javascript" src="'+src+'"><\/script>');
 		var elem = doc.createElement('script');		
 		elem.onload = function(){ if (callback) callback(); };
