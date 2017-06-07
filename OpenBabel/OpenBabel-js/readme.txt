@@ -2,10 +2,13 @@ This directory contains the additional source codes that need to be used when co
 
 If you want to build the javascript yourself, please follow the steps below:
 
-1. Download OpenBabel source code from http://openbabel.org/wiki/Get_Open_Babel . At present the stable version is 2.4.1 (2017.3).
-2. Decompress the zipped file to "OpenBabel-src/src" sub folder of a base directory "OpenBabel" (then you can get OpenBabel/OpenBabel-src/src/src, OpenBabel/OpenBabel-src/src/include... sub directories).
-3. Create a new sub directory inside "OpenBabel-src" directory, e.g. "build-emcc"
-4. Change into build-emcc directory, run command "emcmake cmake ../src" to generate make file.
-5. Copy "OpenBabel-js" folder inside base "OpenBabel" directory. 
-6. Enter into make sub directory (OpenBabel-js/make).
-7. Run command "make EMCC=1" to build OpenBabel JS lib. The output file will be saved in "OpenBabel-js/bin" sub folder.
+
+1. Create a root directory, e.g., MyOpenBabel.
+2. Download OpenBabel source code from http://openbabel.org/wiki/Get_Open_Babel . At present the stable version is 2.4.1.
+3. Decompress the zipped file to OpenBabel-src/src sub folder of the root directory, get subdirectories MyOpenBabel/OpenBabel-src/src/src, MyOpenBabel/OpenBabel-src/src/include and so on.
+4. Create a new sub directory (e.g. build-emcc) inside MyOpenBabel/OpenBabel-src directory.
+5. Change into build-emcc directory, run command emcmake cmake ../src to generate make file and other essential files for JavaScript compilation.
+6. Copy our OpenBabel-js folder into root directory. 
+7. Enter into subdirectory OpenBabel-js/make.
+8. Run command make EMCC=1 to build OpenBabel JS lib. The output file will be saved in "OpenBabel-js/bin" sub folder.
+
