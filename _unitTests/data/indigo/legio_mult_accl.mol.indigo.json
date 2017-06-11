@@ -1,0 +1,15 @@
+{
+    "input": {
+        "format": "mol",
+        "mimeType": "chemical\/x-mdl-molfile",
+        "data": "\r\n  SMMXDraw06031014332D\r\n\r\n  4  3  0  0  0  0  0  0  0  0999 V2000\r\n    3.1750   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    3.8910   -4.5866    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    3.8910   -3.7598    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\r\n    4.6070   -5.0000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\r\n  1  2  1  0  0  0  0\r\n  2  3  2  0  0  0  0\r\n  2  4  1  0  0  0  0\r\nM  END\r\n"
+    },
+    "output": {
+        "smiles": "CC(=O)Cl",
+        "layoutMol": "\n  -INDIGO-05021722022D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    0.0000   -1.6000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3856    0.8000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3856    0.8000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0  0  0  0\n  2  3  2  0  0  0  0\n  2  4  1  0  0  0  0\nM  END\n",
+        "sssrCount": "0",
+        "tautomers": "CC(=O)Cl\nC=C(O)Cl\n",
+        "cml": "<?xml version=\"1.0\" ?>\n<cml>\n    <molecule title=\"\">\n        <atomArray>\n            <atom id=\"a0\" elementType=\"C\" x2=\"3.175\" y2=\"-5\" \/>\n            <atom id=\"a1\" elementType=\"C\" x2=\"3.891\" y2=\"-4.5866\" \/>\n            <atom id=\"a2\" elementType=\"O\" x2=\"3.891\" y2=\"-3.7598\" \/>\n            <atom id=\"a3\" elementType=\"Cl\" x2=\"4.607\" y2=\"-5\" \/>\n        <\/atomArray>\n        <bondArray>\n            <bond atomRefs2=\"a0 a1\" order=\"1\" \/>\n            <bond atomRefs2=\"a1 a2\" order=\"2\" \/>\n            <bond atomRefs2=\"a1 a3\" order=\"1\" \/>\n        <\/bondArray>\n    <\/molecule>\n<\/cml>\n",
+        "mol": "\n  -INDIGO-05021722022D\n\n  4  3  0  0  0  0  0  0  0  0999 V2000\n    3.1750   -5.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8910   -4.5866    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    3.8910   -3.7598    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    4.6070   -5.0000    0.0000 Cl  0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0  0  0  0\n  2  3  2  0  0  0  0\n  2  4  1  0  0  0  0\nM  END\n"
+    }
+}

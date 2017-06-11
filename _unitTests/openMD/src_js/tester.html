@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>OpenMD Tester</title>
+	<link rel="stylesheet" type="text/css" href="default.css" />	
+	<script>
+		var incFileData = [];
+		var predefinedUrlPath = '../data/';
+		var predefinedUrls = [			
+			'ar864.omd.json',
+			'argonNVT.omd.json',
+			'butane.omd.json',
+			'ClH2O.omd.json',
+			'cl.omd.json',
+			'graphene.omd.json',			
+			'mix2.omd.json',
+			'mix.omd.json',			
+			'NaH2O.omd.json',
+			'spce.omd.json',
+			'ssd1.omd.json',
+			'ssde1.omd.json',
+			'ssde.omd.json',
+			'ssd-ion.omd.json',
+			'ssd.omd.json',
+			'ssdrf.omd.json',
+			'tp3.omd.json',
+			'tp4.omd.json',
+			'two1.omd.json',
+			'two.omd.json',
+			'zconsFixed.omd.json',
+			'zconsMoving.omd.json'
+		];
+		
+		function $(id)
+		{
+			return document.getElementById(id);
+		}
+		
+		function loadUrl(url, callback)
+		{
+			var req = new XMLHttpRequest();
+			req.onreadystatechange = function ()
+			{
+				if (req.readyState != 4) return;
+				if (req.status != 200 && req.status != 304)
+				{
+					callback(null, false);  // XHR failed
+					throw 'HTTP error ' + req.status;
+					return;
+				}			
+				callback(req.responseText || req.response, true);  // call successfule
+			};
+
+			req.open("GET", url);
+			req.send();
+		}
+		
+		function loadFile(file, callback)
+		{
+			if (file)
+			{
+			  var reader = new FileReader();
+			  reader.onload = function(e)
+				{
+					var content = reader.result;
+					if (callback)
+						callback(true, content);					
+				};
+			  reader.onerror = function()
+				{
+					console.error('Fail to load file: ', file.name);
+					if (callback)
+						callback(false);					
+				}
+			  reader.readAsText(file);
+			}
+		}
+		function openInputFile(file)
+		{
+			loadFile(file, function(success, content){
+				if (success)
+					$('textInput').value = content;
+			});
+		}
+		function addIncFiles(files)
+		{
+			for (var i = 0, l = files.length; i < l; ++i)
+			{				
+				(function(){
+					var file = files[i];
+					loadFile(file, function(success, content){
+						var fileName = file.name;
+						if (success)
+							incFileData.push({'fileId': fileName, 'content': content});
+							updateIncFileList();
+					});
+				})();
+			}
+		}
+		function updateIncFileList()
+		{
+			var fileInfos = [];
+			incFileData.forEach(function(item){
+				fileInfos.push('[' + item.fileId + ']');
+				//fileInfos.push(item.content);
+				//fileInfos.push(' ');
+			});
+			//$('textIncFiles').value = fileInfos.join('\n');
+		}
+		function clearIncFiles()
+		{
+			incFileData = [];
+			updateIncFileList();
+		}
+		
+		function setStatus(status)
+		{
+			$('labelStatus').innerHTML = status;
+		}
+		
+		var openMdWorker;		
+		function execute()
+		{
+			var srcData = $('textInput').value;
+			executeJob(srcData);
+		}
+		function executeJob(srcData)
+		{
+			//var srcData = $('textInput').value;
+			var srcObj = JSON.parse(srcData);
+			srcObj.execTime = parseFloat(srcObj.execTime);  // convert string output by CPP to number
+			
+			// extract inc data
+			if (srcObj.incFiles)
+			{
+				srcObj.incFiles.forEach(function(item){					
+					incFileData.push({'fileId': item.id, 'content': item.content});
+				});
+			}
+			
+			var resultObj = {};
+			
+			// now in web worker
+			var msg = 'Run calculation in web worker, this may take quite a while...';
+			console.log(msg);
+			setStatus(msg);
+			openMdWorker = new Worker('worker.js');
+			openMdWorker.onmessage = function(e) {								
+				var data = e.data;
+				if (data)
+				{
+					if (data.msgType === 'calculationResult')
+					{
+						if (data.successful)
+						{
+							resultObj.omd = srcObj.omd;
+							resultObj.report = data.report;
+							resultObj.eor = data.eor
+							resultObj.stat = data.stat;
+							resultObj.dump = data.dump;
+							resultObj.execTime = data.duration / 1000;
+							
+							$('textReport').value = data.report;
+							$('textStat').value = data.stat;
+							$('textEor').value = data.eor;
+							
+							var diff = testResult(srcObj, resultObj);
+							var msg = 'Calculation done in ' + data.duration / 1000 + ' sec. (Native in ' + srcObj.execTime + ' secs ). ';
+							msg += (!diff)? '[Result passed]': '[Result different: ' + diff + ' ]!!!';
+							console.log(msg);
+							setStatus(msg);
+						}
+						else
+						{
+							var msg = 'Calculation failed!';
+							console.error(msg);
+							setStatus(msg);
+						}
+					}
+					else if (data.msgType === 'progress')
+					{
+						var percent = Math.round(data.percentage);
+						var remainingTime = data.remainingTime;  // in sec
+						var endTime = new Date(Date.now() + remainingTime * 1000);						
+						var sStatus = 'Calculating: ' + percent + '% done, estimate ending in ' + endTime.toLocaleString();
+						setStatus(sStatus);
+					}
+					else if (data.msgType === 'log')
+					{
+						console.log(data.msg);
+					}
+					else if (data.msgType === 'error')
+					{
+						console.error(data.msg);
+					}
+				}
+			}
+			// set inc files
+			openMdWorker.postMessage({'msgType': 'incData', 'incData': JSON.stringify(incFileData)});
+			// set main data, begin calculation
+			openMdWorker.postMessage({'msgType': 'calculate', 'omdData': srcObj.omd});
+		}
+		function testResult(srcObj, resultObj)
+		{
+			/*
+			var diffs = [];
+			var testFields = ['report', 'stat', 'eor', 'dump'];
+			testFields.forEach(function(field){
+				var diff = getDiffOfTextBlock(srcObj[field], resultObj[field]);
+				if (diff)
+					diffs.push(field + ': ' + diff);
+			});
+			return diffs.join(' \n');
+			*/
+			var srcRep = srcObj['report'];
+			var destRep = resultObj['report'];
+			var srcDetail = getReportDetail(srcRep);
+			var destDetail = getReportDetail(destRep);
+			//console.log(srcDetail);
+			//console.log(destDetail);
+			
+			// check each individual value
+			var ALLOWED_ERROR_RATE = 0.055;
+			var diffFields = [];
+			var keys = Object.getOwnPropertyNames(srcDetail);
+			for (var i = 0, l = keys.length; i < l; ++i)
+			{
+				var key = keys[i];
+				var v1 = srcDetail[key].value || 0;
+				var v2 = destDetail[key].value || 0;
+				var delta = v2 - v1;
+				var errorRate = Math.abs(delta / v1);
+				if (errorRate > ALLOWED_ERROR_RATE)
+				{
+					diffFields.push(keys[i]);
+					console.log('Diff in key: ', key, v1, v2, errorRate);
+				}
+				else
+				{
+					console.log('Same in key: ', key, v1, v2, errorRate);
+				}
+			}
+			
+			if (diffFields.length <= 0)
+				return null;
+			else
+				return diffFields.join(' / ');
+		}		
+		function getDiffOfTextBlock(t1, t2)
+		{
+			var lines1 = t1.split('\n');
+			var lines2 = t2.split('\n');
+			if (lines1.length !== lines2.length)
+				return 'Different lines';
+			else
+			{
+				for (var i = 0, l = lines1.length; i < l; ++i)
+				{
+					if (lines1[i].trim() !== lines2[i].trim())
+						return 'Different in line ' + (i + 1);
+				}
+			}
+			return null;
+		}
+		
+		function getReportDetail(repData)
+		{						
+			var repLineFormat = /\#(.+):(.+)\#/;
+			var repValueFormat = /(.+)\±(.*)/;
+			var result = {};
+			var repLines = repData.split('\n');			
+			repLines.forEach(function(line){
+				var matchResult = line.match(repLineFormat);
+				if (matchResult)  // is data line
+				{
+					var resultItem = {};
+					var key = matchResult[1].trim();
+					var valueStr = matchResult[2].trim();
+					if (!valueStr)
+						return;
+					matchResult = valueStr.match(repValueFormat);
+					var value, errorValue;
+					if (!matchResult)
+					{
+						value = valueStr.trim();
+					}
+					else
+					{
+						value = matchResult[1].trim();
+						errorValue = (matchResult[2] || '').trim();						
+					}
+					var unitedValue = errorValue || value;
+					var splits = unitedValue.split(/\s+/);
+					if (splits.length > 1);
+					{
+						resultItem.valueUnit = (splits[1] || '').trim();						
+					}	
+					if (errorValue)
+					{
+						resultItem.errorValue = parseFloat(splits[0].trim());
+						resultItem.value = parseFloat(value);
+					}
+					else
+						resultItem.value = parseFloat(splits[0].trim());
+					result[key] = resultItem;
+				}
+			});
+			return result;
+		}
+		
+		function terminate()
+		{
+			if (openMdWorker)
+			{
+				openMdWorker.terminate();
+				var msg = 'Calculation terminated by user';
+				console.log(msg);
+				setStatus(msg);
+			}
+		}
+		
+		function fillPredefinedDataList()
+		{
+			var selPredefinedData = $('selPredefinedData');
+			for (var i = -1, l = predefinedUrls.length; i < l; ++i)
+			{
+				var fname = (i >= 0)? predefinedUrls[i]: '';
+				var url = fname? predefinedUrlPath + fname: '';
+				var elem = document.createElement('option');
+				elem.setAttribute('value', url);
+				elem.innerHTML = fname;
+				selPredefinedData.appendChild(elem);
+			}
+		}
+		
+		function init()
+		{
+			var selPredefinedData = $('selPredefinedData');
+			fillPredefinedDataList();
+			selPredefinedData.addEventListener('change', function(e){
+				var url = selPredefinedData.value;
+				if (!url)  // empty
+				{
+					clearIncFiles();
+					$('textInput').value = '';
+				}
+				else
+				{
+					loadUrl(url, function(content, success){
+						if (success)
+						{
+							clearIncFiles();
+							$('textInput').value = content;
+						}
+						else
+							console.log('Load Url failed', url);
+					});
+				}
+			});
+			var inputSrc = $('inputOmdFile');
+			inputSrc.addEventListener('change', function(e){
+			  //openInputFile(e.fileName, e.data);
+			  //console.log(e);
+			  //console.log(inputSrc.files[0]);
+			  openInputFile(inputSrc.files[0]);
+			});
+			/*
+			var inputIncFiles = $('inputIncFiles');
+			inputIncFiles.addEventListener('change', function(e){
+				addIncFiles(inputIncFiles.files);
+			});
+			*/
+		}
+	</script>
+  </head>
+  <body onload="init()">
+	<header id="controller">	  
+	  <label>Open source OMD test data file (*.omd.json): <input type="file" id="inputOmdFile" multiple="true" /></label><br />
+	  <label>Or load predefined data: <select id="selPredefinedData"></select></label><br />
+	  <!--
+	  <label>Add include files: <input type="file" id="inputIncFiles" multiple="true"/></label>
+	  <button id="btnClearIncFiles" onclick="clearIncFiles()">Clear inc files</button>	  
+	  -->
+	  <button id="btnExec" onclick="execute()">Execute</button>
+	  <button id="btnTerminate" onclick="terminate()">Terminate</button>
+	  <div id="labelStatus"></div>	  
+	</header>
+	<article id="stage">
+	  <section id="secInput">
+	    <label for="textInput">Source OMD data:</label><br />
+	    <textarea id="textInput"></textarea><br />
+		<!--
+		<label for="textIncFiles">Include files:</label><br />
+	    <textarea id="textIncFiles"></textarea><br />
+		-->
+	  </section>	  
+	  <section id="secOutput">
+	    <label for="textReport">Report:</label><br />
+	    <textarea id="textReport"></textarea><br />
+	  
+	    <label for="textEor">Eor:</label><br />
+	    <textarea id="textEor"></textarea><br />
+				
+	    <label for="textStat">Stat:</label><br />
+	    <textarea id="textStat"></textarea><br />
+	  </section>
+	</article>
+	<!--
+	<script async type="text/javascript" src="../../bin/openMD.js"></script>
+	-->
+  </body>
+</html>

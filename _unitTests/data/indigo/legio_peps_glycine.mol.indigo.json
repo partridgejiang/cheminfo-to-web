@@ -1,0 +1,15 @@
+{
+    "input": {
+        "format": "mol",
+        "mimeType": "chemical\/x-mdl-molfile",
+        "data": "\r\n  Marvin  01110618342D          \r\n\r\n  5  4  0  0  1  0            999 V2000\r\n    0.2847    0.0007    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n   -0.4298   -0.4118    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\r\n    0.9992   -0.4118    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\r\n    0.2847    0.8257    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\r\n   -1.1442    0.0007    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\r\n  2  1  1  0  0  0  0\r\n  4  1  2  0  0  0  0\r\n  3  1  1  0  0  0  0\r\n  2  5  1  0  0  0  0\r\nM  END\r\n"
+    },
+    "output": {
+        "smiles": "NCC(O)=O",
+        "layoutMol": "\n  -INDIGO-05021722022D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n   -2.7713    0.0000    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.3856   -0.8000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    0.0000    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    1.3856   -0.8000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.0000    1.6000    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n  1  2  1  0  0  0  0\n  2  3  1  0  0  0  0\n  3  4  1  0  0  0  0\n  3  5  2  0  0  0  0\nM  END\n",
+        "sssrCount": "0",
+        "tautomers": "NCC(O)=O\nNC=C(O)O\nNCC(O)=O\nN=CC(O)O\n",
+        "cml": "<?xml version=\"1.0\" ?>\n<cml>\n    <molecule title=\"\">\n        <atomArray>\n            <atom id=\"a0\" elementType=\"C\" x2=\"0.2847\" y2=\"0.0007\" \/>\n            <atom id=\"a1\" elementType=\"C\" x2=\"-0.4298\" y2=\"-0.4118\" \/>\n            <atom id=\"a2\" elementType=\"O\" x2=\"0.9992\" y2=\"-0.4118\" \/>\n            <atom id=\"a3\" elementType=\"O\" x2=\"0.2847\" y2=\"0.8257\" \/>\n            <atom id=\"a4\" elementType=\"N\" x2=\"-1.1442\" y2=\"0.0007\" \/>\n        <\/atomArray>\n        <bondArray>\n            <bond atomRefs2=\"a1 a0\" order=\"1\" \/>\n            <bond atomRefs2=\"a3 a0\" order=\"2\" \/>\n            <bond atomRefs2=\"a2 a0\" order=\"1\" \/>\n            <bond atomRefs2=\"a1 a4\" order=\"1\" \/>\n        <\/bondArray>\n    <\/molecule>\n<\/cml>\n",
+        "mol": "\n  -INDIGO-05021722022D\n\n  5  4  0  0  0  0  0  0  0  0999 V2000\n    0.2847    0.0007    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n   -0.4298   -0.4118    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0\n    0.9992   -0.4118    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n    0.2847    0.8257    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0\n   -1.1442    0.0007    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0\n  2  1  1  0  0  0  0\n  4  1  2  0  0  0  0\n  3  1  1  0  0  0  0\n  2  5  1  0  0  0  0\nM  END\n"
+    }
+}
