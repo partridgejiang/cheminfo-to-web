@@ -7,9 +7,54 @@
 	<link rel="stylesheet" type="text/css" href="default.css" />	
 	<script>
 		var incFileData = [];
+		var predefinedUrlPath = '../data/';
+		var predefinedUrls = [			
+			'ar864.omd.json',
+			'argonNVT.omd.json',
+			'butane.omd.json',
+			'ClH2O.omd.json',
+			'cl.omd.json',
+			'graphene.omd.json',			
+			'mix2.omd.json',
+			'mix.omd.json',			
+			'NaH2O.omd.json',
+			'spce.omd.json',
+			'ssd1.omd.json',
+			'ssde1.omd.json',
+			'ssde.omd.json',
+			'ssd-ion.omd.json',
+			'ssd.omd.json',
+			'ssdrf.omd.json',
+			'tp3.omd.json',
+			'tp4.omd.json',
+			'two1.omd.json',
+			'two.omd.json',
+			'zconsFixed.omd.json',
+			'zconsMoving.omd.json'
+		];
+		
 		function $(id)
 		{
 			return document.getElementById(id);
+		}
+		
+		function loadUrl(url, callback)
+		{
+			var req = new XMLHttpRequest();
+			req.onreadystatechange = function ()
+			{
+				if (req.readyState != 4) return;
+				if (req.status != 200 && req.status != 304)
+				{
+					callback(null, false);  // XHR failed
+					throw 'HTTP error ' + req.status;
+					return;
+				}			
+				callback(req.responseText || req.response, true);  // call successfule
+			};
+
+			req.open("GET", url);
+			req.send();
 		}
 		
 		function loadFile(file, callback)
@@ -62,7 +107,7 @@
 				//fileInfos.push(item.content);
 				//fileInfos.push(' ');
 			});
-			$('textIncFiles').value = fileInfos.join('\n');
+			//$('textIncFiles').value = fileInfos.join('\n');
 		}
 		function clearIncFiles()
 		{
@@ -276,8 +321,44 @@
 			}
 		}
 		
+		function fillPredefinedDataList()
+		{
+			var selPredefinedData = $('selPredefinedData');
+			for (var i = -1, l = predefinedUrls.length; i < l; ++i)
+			{
+				var fname = (i >= 0)? predefinedUrls[i]: '';
+				var url = fname? predefinedUrlPath + fname: '';
+				var elem = document.createElement('option');
+				elem.setAttribute('value', url);
+				elem.innerHTML = fname;
+				selPredefinedData.appendChild(elem);
+			}
+		}
+		
 		function init()
 		{
+			var selPredefinedData = $('selPredefinedData');
+			fillPredefinedDataList();
+			selPredefinedData.addEventListener('change', function(e){
+				var url = selPredefinedData.value;
+				if (!url)  // empty
+				{
+					clearIncFiles();
+					$('textInput').value = '';
+				}
+				else
+				{
+					loadUrl(url, function(content, success){
+						if (success)
+						{
+							clearIncFiles();
+							$('textInput').value = content;
+						}
+						else
+							console.log('Load Url failed', url);
+					});
+				}
+			});
 			var inputSrc = $('inputOmdFile');
 			inputSrc.addEventListener('change', function(e){
 			  //openInputFile(e.fileName, e.data);
@@ -295,8 +376,9 @@
 	</script>
   </head>
   <body onload="init()">
-	<header id="controller">
-	  <label>Open source OMD test data file (*.omd.json): <input type="file" id="inputOmdFile" multiple="true" /></label>
+	<header id="controller">	  
+	  <label>Open source OMD test data file (*.omd.json): <input type="file" id="inputOmdFile" multiple="true" /></label><br />
+	  <label>Or load predefined data: <select id="selPredefinedData"></select></label><br />
 	  <!--
 	  <label>Add include files: <input type="file" id="inputIncFiles" multiple="true"/></label>
 	  <button id="btnClearIncFiles" onclick="clearIncFiles()">Clear inc files</button>	  

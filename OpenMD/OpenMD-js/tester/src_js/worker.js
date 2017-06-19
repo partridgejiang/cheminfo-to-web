@@ -11,14 +11,14 @@ var OpenMdModule = {
 	},
 	locateFile: function(url)
 	{
-		return /*'../../bin/' +*/ url;
+		return '../../bin/' + url;
 	}
 	//logReadFiles: true
 };
 var moduleReady = false;
 var suspendRun = false;
 
-importScripts(/*'../../bin/openMD.js'*/'../../_libs/openMD.js');
+importScripts('../../bin/openMD.js');
 
 var Module = OpenMdModule();
 
