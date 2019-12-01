@@ -15,6 +15,8 @@
 /OpenBabel/my_openbabel_test
 /Indigo/Indigo-src
 /Indigo/my_indigo_test
+/Indigo/Indigo1.3.0beta/
+/Indigo/Indigo1.4.0beta/
 /OpenMD/OpenMD-src
 
 Indigo/Indigo-js/bin/output/*.*
@@ -31,6 +33,9 @@ web.config
 CMakeFiles
 *.cmake
 CMakeCache.txt
+
+#unused make files
+makefile.all
 
 #my deprecated files
 *.old
