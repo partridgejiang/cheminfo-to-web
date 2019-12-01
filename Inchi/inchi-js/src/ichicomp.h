@@ -36,7 +36,7 @@
  *
  */
 
- // Original file is modified to avoid error when compiling by EMCC
+/* Original file is modified to avoid error when compiling by EMCC */
 
 #ifndef _INCHI_COMP_H_
 #define _INCHI_COMP_H_

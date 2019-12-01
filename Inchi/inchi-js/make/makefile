@@ -16,8 +16,8 @@ ifdef EMCC
 		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'InChIModule'"
 	endif
 	
-	EMCC_EXPORT_FUNC_UTILS = -s EXPORTED_FUNCTIONS="['_molToInchiJson']"	
-	EMCC_EXPORT_FUNCS_ALL = -s EXPORTED_FUNCTIONS="['_molToInchiJson']"
+	EMCC_EXPORT_FUNC_UTILS = -s EXPORTED_FUNCTIONS="['_molToInchiJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'	
+	EMCC_EXPORT_FUNCS_ALL = -s EXPORTED_FUNCTIONS="['_molToInchiJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
 	EMCC_MISC_OPTION =  $(EMCC_MODULARIZE_OPTION)
 	#EMCC_MISC_OPTION = --separate-asm
@@ -81,6 +81,9 @@ endif
 ifndef P_API
 	P_API = ../../inchi-src/INCHI-1-SRC/INCHI_API/libinchi/src
 endif
+
+EMCC_PRE_JS_OPTION = --pre-js $(P_MAIN)/pre.js
+
 P_INCL = -I$(P_MAIN) -I$(P_BASE) -I$(P_API)
 C_COMPILER_OPTIONS = $(P_INCL) -ansi -DCOMPILE_ANSI_ONLY -DTARGET_API_LIB -O3 -c
 #C_COMPILER_OPTIONS = -c $(P_INCL) -ansi -O3 -fsigned-char -ffunction-sections -fexpensive-optimizations -fstack-check -fexceptions -Wall -pedantic -Wbad-function-cast -Wreturn-type -Wformat -Wuninitialized -Wcast-align -Wshadow -Wunused -Wunused-value -Wunused-variable -Wunused-function -Wunused-parameter -Wunused-label -Wcomment -Wcast-qual -Wconversion -Wimplicit-int -Wmissing-braces -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls -Wsign-compare -Wfloat-equal -Wstrict-prototypes -Wwrite-strings -Wundef -Waggregate-return -Wchar-subscripts -Wformat-nonliteral -Wnested-externs -Wsequence-point -Wpointer-arith -mfancy-math-387 -mieee-fp -mno-soft-float
@@ -232,7 +235,7 @@ exeTasks: $(INCHI_EXECUTABLE_PATHNAME) $(TEST_DATA_BUILDER_EXE_PATHNAME)
 endif	
 
 $(INCHI_EXECUTABLE_PATHNAME) : $(INCHI_OBJS) $(INCHI_EXE_OBJS)
-	$(LINKER) $(LINKER_OPTIONS) -o $(INCHI_EXECUTABLE_PATHNAME) $(INCHI_OBJS) $(INCHI_EXE_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION)
+	$(LINKER) $(LINKER_OPTIONS) -o $(INCHI_EXECUTABLE_PATHNAME) $(INCHI_OBJS) $(INCHI_EXE_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
 $(TEST_DATA_BUILDER_EXE_PATHNAME) : $(INCHI_OBJS) $(TEST_DATA_BUILDER_OBJS)
 	$(LINKER) $(LINKER_OPTIONS) -o $(TEST_DATA_BUILDER_EXE_PATHNAME) $(INCHI_OBJS) $(TEST_DATA_BUILDER_OBJS) -lm $(EMCC_OPTIMIZE) $(EMCC_EXPORT_FUNCS_ALL) $(EMCC_MEM_FILE_OPTION) $(EMCC_MISC_OPTION)
 # ichi_bns.o:

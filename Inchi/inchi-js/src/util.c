@@ -36,7 +36,7 @@
  *
  */
 
-// Modification in original line 1562 to avoid error in EMCC
+/* Modification in original line 1562 to avoid error in EMCC */
 
 
 #include <string.h>
