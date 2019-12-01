@@ -3,7 +3,7 @@ This directory contains the additional source codes that need to be used when co
 If you want to build the Javascript code yourself, please follow the steps below under 64 bit Linux:
 
 1. Create a root directory, e.g. MyIndigo.
-2. Download or clone Indigo source code from https://github.com/epam/Indigol (1.3.0 at present).
+2. Download or clone Indigo source code from https://github.com/epam/Indigol (1.4.0 at present).
 3. Put the downloaded Indigo source to indigo-src/Indigo sub folder of the base directory. Ensure subdirectories MyIndigo/Indigo-src/Indigo/api, MyIndigo/Indigo-src/Indigo/common and so on are got.
 4. Download InChi source code (INCHI-1-SRC.zip) from http://www.inchi-trust.org/downloads/.
 5. Decompress INCHI-1-SRC.zip, and copy its INCHI-1-SRC/INCHI_API, INCHI-1-SRC/INCHI_BASE sub folder to MyIndigo/Indigo-src/Indigo/third_party/inchi. Those operations fix some issues of InChI code shipped with Indigo itself.
