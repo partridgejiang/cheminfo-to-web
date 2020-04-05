@@ -85,3 +85,40 @@ char* molToInchiJson(char* molText, char* options)
 
     return sResult;
 }
+
+char* getInChIKeyJson(char* inchiSource, int xtra1, int xtra2)
+{
+	char* sInChIKey = (char*)malloc(28);
+	char* sXtra1 = (char*)malloc(65);
+	char* sXtra2 = (char*)malloc(65);;
+	
+	// memset(sInChIKey, 0, sizeof(*sInChIKey));
+	// memset(sXtra1, 0, sizeof(*sXtra1));
+	// memset(sXtra2, 0, sizeof(*sXtra1));
+	
+	int rawResult = GetINCHIKeyFromINCHI(inchiSource, xtra1, xtra2, sInChIKey, sXtra1, sXtra2);
+	
+	/* Turn into JSON */
+	char* sSuccess;		
+	if (rawResult == INCHIKEY_OK)
+	{
+		sSuccess = "true";		
+	}
+	else
+	{
+		sSuccess = "false";						
+	}
+	int strSize = _safeStrLen(sInChIKey) + _safeStrLen(sXtra1) + _safeStrLen(sXtra2) + _safeStrLen(sSuccess)
+			+ _safeStrLen("{'inchiKey':'','xtra1':'','xtra2':'','success':'','errorCode':###}") + 1;
+	    
+	char* sResult = (char*)malloc(strSize);
+	
+	snprintf(sResult, strSize, "{\"inchiKey\":\"%s\",\"xtra1\":\"%s\",\"xtra2\":\"%s\",\"success\":\"%s\",\"errorCode\":%d}",
+		_concreateStr(sInChIKey), _concreateStr(sXtra1), _concreateStr(sXtra2), sSuccess, rawResult);
+		
+	free(sInChIKey);
+	free(sXtra1);
+	free(sXtra2);
+	
+	return sResult;
+}

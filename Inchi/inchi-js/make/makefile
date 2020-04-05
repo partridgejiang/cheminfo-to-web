@@ -16,8 +16,8 @@ ifdef EMCC
 		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'InChIModule'"
 	endif
 	
-	EMCC_EXPORT_FUNC_UTILS = -s EXPORTED_FUNCTIONS="['_molToInchiJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'	
-	EMCC_EXPORT_FUNCS_ALL = -s EXPORTED_FUNCTIONS="['_molToInchiJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
+	EMCC_EXPORT_FUNC_UTILS = -s EXPORTED_FUNCTIONS="['_molToInchiJson', '_getInChIKeyJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'	
+	EMCC_EXPORT_FUNCS_ALL = -s EXPORTED_FUNCTIONS="['_molToInchiJson', '_getInChIKeyJson']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
 	EMCC_MISC_OPTION =  $(EMCC_MODULARIZE_OPTION)
 	#EMCC_MISC_OPTION = --separate-asm
