@@ -28,11 +28,11 @@ OpenBabel::OBMol* readData(string inputData, int loopCount = 1)
   {
     if (conv.ReadString(mol, inputData))
 	{
-	  //cout << "Read " << i << " successful" << endl;
+	  cout << "Read " << i << " successful" << endl;
 	}
 	else
 	{
-	  //cout << "Read " << i << " failed!" << endl;
+	  cout << "Read " << i << " failed!" << endl;
 	}
   }
   clock_t tEnd = clock();

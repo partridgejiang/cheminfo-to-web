@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/src
+CMAKE_SOURCE_DIR = /mnt/hgfs/F/Users/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel-js/benchmark-cpp/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/hgfs/WinUsers/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel_benchmarks/bin
+CMAKE_BINARY_DIR = /mnt/hgfs/F/Users/Ginger/Programer/Project/chemoinfWeblizer/Cheminfo-weblize/OpenBabel/OpenBabel-js/benchmark-cpp/bin
 
 #=============================================================================
 # Targets provided globally by CMake.

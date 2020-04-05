@@ -19,7 +19,7 @@ void readData(string inputData, int loopCount)
   // Start benchmark
   int i;  
   clock_t tStart = clock();
-  for (var i = 0; i < loopCount; ++i)
+  for (i = 0; i < loopCount; ++i)
   {
     if (conv.ReadString(&mol, inputData))
 	{

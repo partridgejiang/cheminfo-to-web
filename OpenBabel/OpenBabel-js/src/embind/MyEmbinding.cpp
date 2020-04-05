@@ -540,7 +540,17 @@ EMSCRIPTEN_BINDINGS(OBConvWrapper_Bind) {
 		.function("getSupportedInputFormatsStr", &ObConversionWrapper::getSupportedInputFormatsStr)
 		.function("getSupportedOutputFormatsStr", &ObConversionWrapper::getSupportedOutputFormatsStr)
 		.function("getFormatInfoById", &ObConversionWrapper::getFormatInfoById)
-		;
+		.function("addOption", &ObConversionWrapper::addOption)
+		.function("removeOption", &ObConversionWrapper::removeOption)
+		.function("setOptions", &ObConversionWrapper::setOptions)
+		;	
+		
+	enum_<OBConversion::Option_type>("ObConversion_Option_type")
+        .value("INOPTIONS", OBConversion::Option_type::INOPTIONS)
+        .value("OUTOPTIONS", OBConversion::Option_type::OUTOPTIONS)
+		.value("GENOPTIONS", OBConversion::Option_type::GENOPTIONS)
+		.value("ALL", OBConversion::Option_type::ALL)
+        ;
 }
 
 EMSCRIPTEN_BINDINGS(OB3DGenWrapper_Bind) {
@@ -635,17 +645,17 @@ EMSCRIPTEN_BINDINGS(OBFormat_Bind) {
         .constructor<void>()
         ;
 }
-
 EMSCRIPTEN_BINDINGS(OBConversion_Bind) {
     class_<OBConversion>("OBConversion")
-        .constructor<void>()
-        .function("ReadString", &OBConversion::ReadString)
-		.function("WriteString", &OBConversion::WriteString)
+        //.constructor<void>()
+        //.function("ReadString", &OBConversion::ReadString)
+		//.function("WriteString", &OBConversion::WriteString)
 		//.function("SetInFormat",  select_overload<void(OBFormat)>(&OBConversion::SetInFormat))
 		//.function("SetOutFormat",  select_overload<void(OBFormat)>&OBConversion::SetOutFormat)
-		.function("ReportNumberConverted", &OBConversion::ReportNumberConverted)
-        ;
+		//.function("ReportNumberConverted", &OBConversion::ReportNumberConverted)
+        //;
 }
+
 */
 
 

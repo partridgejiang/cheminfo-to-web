@@ -349,6 +349,28 @@ public:
 		}
 		return result;
 	}
+	
+	/*
+	std::string getOptions(OBConversion::Option_type opttyp = OBConversion::Option_type::OUTOPTIONS)
+	{
+		return this->conv->GetOptions(opttype);
+	}
+	*/
+	
+	void addOption(std::string optionName, OBConversion::Option_type opttyp = OBConversion::Option_type::OUTOPTIONS, std::string optionValue = NULL)
+	{
+		return this->obConv->AddOption(optionName.c_str(), opttyp, optionValue.c_str());
+	}
+	
+	bool removeOption(std::string optionName, OBConversion::Option_type opttyp = OBConversion::Option_type::OUTOPTIONS)
+	{
+		return this->obConv->RemoveOption(optionName.c_str(), opttyp);
+	}
+	
+	void setOptions(std::string options, OBConversion::Option_type opttyp = OBConversion::Option_type::OUTOPTIONS)
+	{
+		return this->obConv->SetOptions(options.c_str(), opttyp);
+	}
 };
 
 

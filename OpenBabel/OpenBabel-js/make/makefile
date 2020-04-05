@@ -9,6 +9,8 @@ ifndef NATIVE
 		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'OpenBabelModule'"
 	endif
 	
+	EMCC_PRE_JS_OPTION = --pre-js $(SRC_DIR)/pre.js
+	
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
 	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION) -s ASSERTIONS=0
 	#EMCC_MISC_OPTION = --separate-asm
@@ -89,8 +91,6 @@ ifndef FORMAT_JSON
 endif
 CPP_COMPILER_OPTIONS = $(P_INCLUDE) $(OPTIMIZE) -UHAVE_LIBZ -c -std=c++11
 C_COMPILER_OPTIONS = $(P_INCLUDE) $(OPTIMIZE) -UHAVE_LIBZ -c
-
-EMCC_PRE_JS_OPTION = --pre-js $(SRC_DIR)/pre.js
 
 # === OpenBabel src files ===
 EMCC_EMBED_FILE_MARK = --embed-file
