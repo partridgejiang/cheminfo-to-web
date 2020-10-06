@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.6)
+add_executable(ioRunner ../src/ObWrapper.cpp ../src/ioRunner.cpp)
+add_executable(gen3DRunner ../src/ObWrapper.cpp ../src/gen3DRunner.cpp)
+#target_link_libraries(ioRunner openbabel)
+#target_link_libraries(ioRunner /home/ginger/programmer/openbabel-src/build-emcc/lib/libopenbabel.so)
+target_link_libraries(ioRunner /home/ginger/programmer/openbabel-src/build/lib/libopenbabel.so)
+target_link_libraries(gen3DRunner /home/ginger/programmer/openbabel-src/build/lib/libopenbabel.so)
+include_directories(/home/ginger/programmer/openbabel-src/src/include /home/ginger/programmer/openbabel-src/build/include)

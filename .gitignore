@@ -13,6 +13,12 @@
 /Inchi/inchi-src
 /OpenBabel/OpenBabel-src
 /OpenBabel/my_openbabel_test
+/OpenBabel3/*.zip
+/OpenBabel3/_requires
+/OpenBabel3/js-temp
+/OpenBabel3/3rdPartyLibs
+/OpenBabel3/OpenBabel-src
+/OpenBabel3/my_openbabel_test
 /Indigo/Indigo-src
 /Indigo/my_indigo_test
 /Indigo/Indigo1.3.0beta/

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>OpenBabel-js IO Benchmark</title>
+	<link rel="stylesheet" type="text/css" href="default.css" />
+	<script type="text/javascript" src="./kekule/kekule.js?modules=io"></script>
+	<script>
+	  var Module;
+	  var obMol;
+	  function $(id)
+	  {
+	    return document.getElementById(id);
+	  }
+	  
+	  function openInputFile(file)
+	  {
+	    if (file)
+		{
+		  var reader = new FileReader();
+		  reader.onload = function(e)
+			{
+				var content = reader.result;
+				$('textInput').value = content;
+				var loopCount = parseInt($('inputLoopCount').value) || 1;
+				
+				clearLog();
+				
+				// OpenBabel
+				var mol = loadMol(content, loopCount);
+				var s = saveMol(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+				$('textOutputMol').value = s;
+				var s = saveMol(mol, 'chemical/x-pdb', 'pdb', loopCount);
+				$('textOutputPdb').value = s;
+				//mol['delete']();
+				obMol = mol;
+				
+				// Kekule
+				var mol = loadMolKekule(content, loopCount);
+				var s = saveMolKekule(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+				$('textOutputMolKekule').value = s;
+			};
+			reader.onerror = function()
+			{
+				console.error('Fail to load source file!');
+			}
+		  reader.readAsText(file);
+		}
+	  }
+	  function loadMol(data, loopCount)
+	  {	    		
+		// benchmark
+		var _obConv = new (Module['ObConversionWrapper'])();
+		var mimeType = 'chemical/x-mdl-molfile';
+		var fileExt = 'mol';
+		var fmt = _obConv.setInFormat(mimeType, fileExt);
+		var obClassName = 'OBMol';
+		var obObj = new (Module[obClassName])();
+
+		var tStart = Date.now();
+		for (var i = 0; i < loopCount; ++i)
+		{
+		  var hasObj = _obConv.readString(obObj, data);		  
+		  /*
+		  if (hasObj)
+			console.log('Read success', i);
+		  /*
+		  var mol = reader.readData(data, null, formatInfo.id);
+
+		  if (!!mol)
+			console.log('Read success', i);
+		  */
+		}
+		var tEnd = Date.now();
+		_obConv['delete']();
+		  
+		//console.log(obObj);
+		var msg = 'Run read MOL ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
+		return obObj;
+	  }
+	  function saveMol(mol, mimeType, fileExt, loopCount)
+	  {
+	    var _obConv = new (Module['ObConversionWrapper'])();
+		var fmt = _obConv.setOutFormat(mimeType, fileExt);		
+
+		var tStart = Date.now();
+		for (var i = 0; i < loopCount; ++i)
+		{
+		  var content = _obConv.writeString(mol, false);		  
+		}
+		var tEnd = Date.now();
+		_obConv['delete']();
+		
+		var msg = 'Run write ' + mimeType + ' ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
+		
+		return content;
+	  }
+	  function loadMolKekule(data, loopCount)
+	  {
+	    var reader = new Kekule.IO.MdlReader();
+		var mol = reader.readData(data, null, 'mol');
+		if (!mol)
+		{
+		  console.error('Kekule reader failed!');
+		  return;
+		}
+		var tStart = Date.now();
+		for (var i = 0; i < loopCount; ++i)
+		{
+		  mol = reader.readData(data, null, 'mol');
+		}
+		var tEnd = Date.now();		
+		var msg = 'Run read MOL in Kekule.js ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
+		
+		mol.getSrcInfo().data = '';  // clear data, avoid affect write
+		return mol;
+	  }
+	  function saveMolKekule(mol, mimeType, fileExt, loopCount)
+	  {
+	    var formatInfo = Kekule.IO.DataFormatsManager.findFormat(mimeType, fileExt);
+		var fmtId = formatInfo.id;
+	  
+	    var writer = new Kekule.IO.MdlWriter();
+		var s = writer.writeData(mol, null, fmtId); 	
+		if (!s)
+		{
+		  console.error('Kekule writer failed');
+		  return;
+		}
+
+		var tStart = Date.now();
+		for (var i = 0; i < loopCount; ++i)
+		{
+		  s = writer.writeData(mol, null, fmtId); 	
+		}
+		var tEnd = Date.now();		
+		
+		var msg = 'Run write ' + mimeType + ' in Kekule.js ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms';
+		console.log(msg);
+		addLog(msg);
+		return s;
+	  }
+	  
+	  function clearLog()
+	  {
+		$('textLog').value = '';
+	  }
+	  function addLog(str)
+	  {
+		$('textLog').value += str + '\n';
+	  }
+	  
+	  function init()
+	  {
+	    var inputSrc = $('inputSrcFile');
+	    inputSrc.addEventListener('change', function(e){
+		  //openInputFile(e.fileName, e.data);
+		  //console.log(e);
+		  //console.log(inputSrc.files[0]);
+		  openInputFile(inputSrc.files[0]);
+		});
+		Module = OpenBabelModule();
+	  }
+	</script>
+  </head> 
+  <body onload="init()">
+    <header id="controller">
+	  <label>Open source file: <input type="file" id="inputSrcFile" /></label>
+	  <label>I/O loop count: <input type="text" id="inputLoopCount" value="100" /></label>
+	</header>
+	<article id="stage">
+	  <section id="secInput">
+		<label for="textInput">Input data:</label><br />
+		<textarea id="textInput"></textarea>
+	  </section>
+	  <section id="secLog">
+		<label for="textLog">Output data in OpenBabel (MOL):</label><br />
+		<textarea id="textLog"></textarea>
+	  </section>
+	  <section id="secOutputMol">
+		<label for="textOutputMol">Output data in OpenBabel (MOL):</label><br />
+		<textarea id="textOutputMol"></textarea>
+	  </section>
+	  <section id="secOutputPdb">
+		<label for="textOutputPdb">Output data in OpenBabel (PDB):</label><br />
+		<textarea id="textOutputPdb"></textarea>
+	  </section>
+	  <section id="secOutputMolKekule">
+		<label for="textOutputMolKekule">Output data in Kekule (MOL):</label><br />
+		<textarea id="textOutputMolKekule"></textarea>
+	  </section>
+	</article>
+	<script async type="text/javascript" src="../bin/openbabel.js"></script>	
+  </body>
+</html>

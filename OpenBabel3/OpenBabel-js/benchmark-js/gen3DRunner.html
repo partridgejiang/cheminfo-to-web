@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>OpenBabel-js 3D Generation Benchmark</title>
+	<link rel="stylesheet" type="text/css" href="default.css" />		
+	<!--
+	<script type="text/javascript" src="./kekule/kekule.js?modules=io&openbabel"></script>	
+	-->
+	<script>
+	  var Module;  // = {logReadFiles: true};
+	  function $(id)
+	  {
+	    return document.getElementById(id);
+	  }
+	  
+	  function openInputFile(file)
+	  {
+	    if (file)
+		{
+		  var reader = new FileReader();
+		  reader.onload = function(e)
+			{
+				var content = reader.result;
+				$('textInput').value = content;
+				var loopCount = parseInt($('inputLoopCount').value) || 1;
+				var forceField = $('inputForcefield').value;
+				// OpenBabel 3D generation
+				//var mol = loadMol(content);				
+				var mol = gen3D(content, forceField, loopCount);
+				var s = saveMol(mol, 'chemical/x-mdl-molfile', 'mol', loopCount);
+				$('textOutputMol').value = s;				
+				mol['delete']();				
+			};
+			reader.onerror = function()
+			{
+				console.error('Fail to load source file!');
+			}
+		  reader.readAsText(file);
+		}
+	  }
+	  function gen3D(srcData, forceField, loopCount)
+	  {
+	    $('labelReport').innerHTML = '';
+		var mol;
+	    var gen = new (Module['OB3DGenWrapper'])();
+		var tStart = Date.now();
+		for (var i = 0, l = loopCount || 1; i < l; ++i)
+		{
+		  mol = gen.generate3DStructureFromMolData(srcData, forceField || 'MMFF94');
+		}
+		var tEnd = Date.now();
+		var msg = ('Generate 3D structure by force field [' + forceField + '] ' + loopCount + ' times in ' + (tEnd - tStart) + ' ms');
+		console.log(msg);
+		$('labelReport').innerHTML = msg;
+		return mol;
+	  }
+	  function loadMol(data)
+	  {	    		
+		// benchmark
+		var _obConv = new (Module['ObConversionWrapper'])();
+		var mimeType = 'chemical/x-mdl-molfile';
+		var fileExt = 'mol';
+		var fmt = _obConv.setInFormat(mimeType, fileExt);
+		var obClassName = 'OBMol';
+		var obObj = new (Module[obClassName])();
+
+		var hasObj = _obConv.readString(obObj, data);		  
+		
+		_obConv['delete']();
+		  				
+		return obObj;
+	  }
+	  function saveMol(mol, mimeType, fileExt, loopCount)
+	  {
+	    var _obConv = new (Module['ObConversionWrapper'])();
+		var fmt = _obConv.setOutFormat(mimeType, fileExt);		
+
+	    var content = _obConv.writeString(mol, false);		  		
+		_obConv['delete']();
+				
+		return content;
+	  }
+	  
+	  function init()
+	  {
+	    var inputSrc = $('inputSrcFile');
+	    inputSrc.addEventListener('change', function(e){
+		  //openInputFile(e.fileName, e.data);
+		  console.log(e);
+		  console.log(inputSrc.files[0]);
+		  openInputFile(inputSrc.files[0]);
+		});
+		Module = OpenBabelModule({logReadFiles: true});
+	  }
+	</script>
+  </head> 
+  <body onload="init()">
+    <header id="controller">
+	  <label>Open source file: <input type="file" id="inputSrcFile" /></label>
+	  <label>I/O loop count: <input type="text" id="inputLoopCount" value="1" /></label>
+	  <label>Force field: <input type="text" id="inputForcefield" value="MMFF94" /></label>
+	  <label id="labelReport"></label>
+	</header>
+	<article id="stage">
+	  <section id="secInput">
+		<label for="textInput">Input data:</label><br />
+		<textarea id="textInput"></textarea>
+	  </section>
+	  <section id="secOutputMol">
+		<label for="textOutputMol">Output data in OpenBabel (MOL):</label><br />
+		<textarea id="textOutputMol"></textarea>
+	  </section>	  
+	</article>	
+	<script async type="text/javascript" src="../bin/openbabel.js"></script>	
+  </body>
+</html>
