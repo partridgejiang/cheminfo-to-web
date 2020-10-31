@@ -8,18 +8,28 @@ ifndef NATIVE
 	ifndef NO_MODULARIZE
 		EMCC_MODULARIZE_OPTION = -s MODULARIZE=1 -s EXPORT_NAME="'OpenBabelModule'"
 	endif
-	
-	EMCC_PRE_JS_OPTION = --pre-js $(SRC_DIR)/pre.js
-	
+		
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
-	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION) -s ASSERTIONS=0
+	EMCC_MISC_OPTION = $(EMCC_MODULARIZE_OPTION) -s ASSERTIONS=0 -s ALLOW_MEMORY_GROWTH=1
 	#EMCC_MISC_OPTION = --separate-asm
 	LINKER_OPTIONS = --bind
+
+	EXTERNAL_DATA_FILE_NAME = openbabel.data
+	EXTERNAL_FILE_PACKAGER = python $(EMSDK)/fastcomp/emscripten/tools/file_packager.py
+	EXTERNAL_FILE_PACKAGER_JS_OUTPUT = $(BIN_DIR)/$(EXTERNAL_DATA_FILE_NAME).js
+
+	EMCC_PRE_JS_OPTION = --pre-js $(SRC_DIR)/pre.js  --pre-js $(EXTERNAL_FILE_PACKAGER_JS_OUTPUT) #--extern-pre-js $(SRC_DIR)/pre_extern.js  #-extern-pre-js seems to have bug and can not be used
+	EMCC_PRE_JS_FILE_PATHNAME = $(SRC_DIR)/pre_extern.js
+	
 else
 	C_COMPILER = gcc
 	CPP_COMPILER = g++
 	LINKER = g++ -s
 	EXE_EXT = 
+	ifdef BENCHMARKS
+		BENCHMARK_SRC_DIR = $(SRC_DIR)/../benchmark-cpp/src
+		BENCHMARK_OUTPUT_DIR = $(SRC_DIR)/../benchmark-cpp/bin
+	endif
 endif
 EXE_NAME = openbabel
 OPTIMIZE = -O3
@@ -44,6 +54,9 @@ ifndef OB_DATA_DIR
 endif
 ifndef OB_SRC_DIR
 	OB_SRC_DIR = $(OB_BASE_DIR)/src
+endif
+ifndef OB_CHARGE_SRC_DIR
+	OB_CHARGE_SRC_DIR = $(OB_SRC_DIR)/charges
 endif
 ifndef OB_DESCRIPTOR_SRC_DIR
 	OB_DESCRIPTOR_SRC_DIR = $(OB_SRC_DIR)/descriptors
@@ -111,7 +124,8 @@ CPP_COMPILER_OPTIONS = $(P_INCLUDE) $(OPTIMIZE) -UHAVE_LIBZ -c -std=c++11
 C_COMPILER_OPTIONS = $(P_INCLUDE) $(OPTIMIZE) -UHAVE_LIBZ -c
 
 # === OpenBabel src files ===
-EMCC_EMBED_FILE_MARK = --embed-file
+EMCC_EMBED_FILE_MARK = --embed-file #--preload-file
+EMCC_EXTERNAL_FILE_MARK = --preload
 OB_DATA_SUBDIR = data/
 
 OB_DATA_FILES = \
@@ -123,7 +137,15 @@ $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.tx
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/atomtyp.txt@$(OB_DATA_SUBDIR)atomtyp.txt	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/element.txt@$(OB_DATA_SUBDIR)element.txt	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/types.txt@$(OB_DATA_SUBDIR)types.txt	\
-$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/phmodel.txt@$(OB_DATA_SUBDIR)phmodel.txt
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/phmodel.txt@$(OB_DATA_SUBDIR)phmodel.txt  \
+
+OB_EXTERNAL_DATA_FILES = \
+$(EMCC_EXTERNAL_FILE_MARK) $(OB_DATA_DIR)/rigid-fragments-index.txt@$(OB_DATA_SUBDIR)rigid-fragments-index.txt  \
+$(EMCC_EXTERNAL_FILE_MARK) $(OB_DATA_DIR)/rigid-fragments.txt@$(OB_DATA_SUBDIR)rigid-fragments.txt  \
+$(EMCC_EXTERNAL_FILE_MARK) $(OB_DATA_DIR)/ring-fragments.txt@$(OB_DATA_SUBDIR)ring-fragments.txt
+
+
+
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/aromatic.txt@$(OB_DATA_SUBDIR)aromatic.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope.txt@$(OB_DATA_SUBDIR)isotope.txt	\
 #$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/isotope-small.txt@$(OB_DATA_SUBDIR)isotope-small.txt	\
@@ -149,6 +171,7 @@ $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/mmff94.ff@$(OB_DATA_SUBDIR)mmff94.ff	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/mmff94s.ff@$(OB_DATA_SUBDIR)mmff94s.ff	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/mmffs_oop.par@$(OB_DATA_SUBDIR)mmffs_oop.par	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/mmffs_tor.par@$(OB_DATA_SUBDIR)mmffs_tor.par	\
+$(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/mmfftor.par@$(OB_DATA_SUBDIR)mmfftor.par	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/gaff.prm@$(OB_DATA_SUBDIR)gaff.prm	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/gaff.prm@$(OB_DATA_SUBDIR)gaff.dat	\
 $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/UFF.prm@$(OB_DATA_SUBDIR)UFF.prm	\
@@ -158,6 +181,7 @@ $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/ghemical.prm@$(OB_DATA_SUBDIR)ghemical.pr
 
 ifndef NATIVE
   EMCC_EMBED_FILE_OPTION = $(OB_FF_DATA_FILES) $(OB_DATA_FILES) # FF data files currently is bypass to reduce file size, normal data files usally can fall back to .h replacements
+  #EMCC_EMBED_FILE_OPTION = $(EMCC_EMBED_FILE_MARK) $(OB_DATA_DIR)/@$(OB_DATA_SUBDIR)
 endif
 
 OB_BASE_SRCS =	\
@@ -482,12 +506,24 @@ $(BIN_OBJ_DIR)/tautomer.o	\
 $(BIN_OBJ_DIR)/tokenst.o	\
 $(BIN_OBJ_DIR)/transform.o	\
 $(BIN_OBJ_DIR)/typer.o	\
-$(BIN_OBJ_DIR)/dlhandler_unix.o	\
 $(BIN_OBJ_DIR)/align.o	\
 $(BIN_OBJ_DIR)/matrix3x3.o	\
 $(BIN_OBJ_DIR)/spacegroup.o	\
 $(BIN_OBJ_DIR)/transform3d.o	\
-$(BIN_OBJ_DIR)/vector3.o
+$(BIN_OBJ_DIR)/vector3.o   \
+  \
+$(BIN_OBJ_DIR)/eem.o   \
+$(BIN_OBJ_DIR)/eqeq.o   \
+$(BIN_OBJ_DIR)/fromfile.o   \
+$(BIN_OBJ_DIR)/gasteiger.o   \
+$(BIN_OBJ_DIR)/mmff94.o   \
+$(BIN_OBJ_DIR)/none.o   \
+$(BIN_OBJ_DIR)/qeq.o   \
+$(BIN_OBJ_DIR)/qtpie.o
+
+#$(BIN_OBJ_DIR)/dlhandler_unix.o	\  no need to use dynamic lib?
+
+
 #$(BIN_OBJ_DIR)/chiral.o	\
 #$(BIN_OBJ_DIR)/confsearch.o	\
 #$(BIN_OBJ_DIR)/confsearch.o	\	# is this file needed?
@@ -504,10 +540,10 @@ $(BIN_OBJ_DIR)/vector3.o
 #zipstream.h	
 #zipstreamimpl.h
 
-ifndef NATIVE
-OB_PLUGIN_OBJS =	\
-$(BIN_OBJ_DIR)/plugin.o
-endif
+#ifndef NATIVE
+#OB_PLUGIN_OBJS =	\
+#$(BIN_OBJ_DIR)/plugin.o
+#endif
 
 OB_DESCRIPTOR_OBJS = \
 $(BIN_OBJ_DIR)/cansmidescriptor.o	\
@@ -614,7 +650,6 @@ $(BIN_OBJ_DIR)/smilesformat.o	\
 $(BIN_OBJ_DIR)/smileyformat.o	\
 $(BIN_OBJ_DIR)/textformat.o	\
 $(BIN_OBJ_DIR)/thermoformat.o	\
-$(BIN_OBJ_DIR)/thermoformat.o	\
 $(BIN_OBJ_DIR)/tinkerformat.o	\
 $(BIN_OBJ_DIR)/titleformat.o	\
 $(BIN_OBJ_DIR)/turbomoleformat.o	\
@@ -625,7 +660,7 @@ $(BIN_OBJ_DIR)/xedformat.o	\
 $(BIN_OBJ_DIR)/xsfformat.o	\
 $(BIN_OBJ_DIR)/xyzformat.o	\
 $(BIN_OBJ_DIR)/yasaraformat.o	\
-$(BIN_OBJ_DIR)/zindoformat.o
+$(BIN_OBJ_DIR)/zindoformat.o   \
 #$(BIN_OBJ_DIR)/exampleformat.o	\
 
 ifdef FORMAT_JSON
@@ -644,13 +679,22 @@ endif
 
 ifdef NATIVE
 OB_FORMAT_OBJS +=	\
-$(BIN_OBJ_DIR)/fpsformat.o	\
-$(BIN_OBJ_DIR)/painterformat.o	\
-$(BIN_OBJ_DIR)/svgformat.o	\
-$(BIN_OBJ_DIR)/stlformat.o	\
 $(BIN_OBJ_DIR)/APIInterface.o	\
+$(BIN_OBJ_DIR)/depict.o	\
+$(BIN_OBJ_DIR)/commandpainter.o	\
+$(BIN_OBJ_DIR)/svgpainter.o	\
+$(BIN_OBJ_DIR)/asciipainter.o	\
+  \
+$(BIN_OBJ_DIR)/fpsformat.o	\
 $(BIN_OBJ_DIR)/xtcformat.o	\
-$(BIN_OBJ_DIR)/asciiformat.o
+$(BIN_OBJ_DIR)/asciiformat.o  \
+$(BIN_OBJ_DIR)/stlformat.o  \
+$(BIN_OBJ_DIR)/painterformat.o	\
+$(BIN_OBJ_DIR)/svgformat.o
+endif
+
+ifdef NATIVE_EXTRA
+#OB_FORMAT_OBJS +=	\
 #$(BIN_OBJ_DIR)/png2format.o	\
 #$(BIN_OBJ_DIR)/pngformat.o	\
 #$(BIN_OBJ_DIR)/confabreport.o	\
@@ -733,9 +777,9 @@ $(BIN_OBJ_DIR)/conformer.o	\
 $(BIN_OBJ_DIR)/delnonpolarh.o	\
 $(BIN_OBJ_DIR)/delpolarh.o	\
 $(BIN_OBJ_DIR)/fillUC.o	\
-$(BIN_OBJ_DIR)/forcefield.o	\
 $(BIN_OBJ_DIR)/largest.o	\
 $(BIN_OBJ_DIR)/gen3d.o	\
+$(BIN_OBJ_DIR)/gen2D.o	\
 $(BIN_OBJ_DIR)/loader.o	\
 $(BIN_OBJ_DIR)/neutralize.o	\
 $(BIN_OBJ_DIR)/ophighlight.o	\
@@ -746,7 +790,8 @@ $(BIN_OBJ_DIR)/partialcharges.o	\
 $(BIN_OBJ_DIR)/readconformers.o	\
 $(BIN_OBJ_DIR)/sort.o	\
 $(BIN_OBJ_DIR)/xout.o	\
-$(BIN_OBJ_DIR)/opalign.o
+$(BIN_OBJ_DIR)/opalign.o  \
+$(BIN_OBJ_DIR)/forcefield_ops.o	  # actually ops/forcefield.cpp, but name duplication with /forcefield.cpp
 #$(BIN_OBJ_DIR)/op2d.o	\   // use RDKit
 #$(BIN_OBJ_DIR)/opconfab.o	
 
@@ -760,19 +805,65 @@ endif
 ifndef NATIVE
   BINDER_OBJS =	\
   $(BIN_OBJ_DIR)/MyEmbinding.o	\
-  $(BIN_OBJ_DIR)/ObWrapper.o
+  $(BIN_OBJ_DIR)/ObWrapper.o  
 endif
 
-ifdef NATIVE
-  MAIN_OBJS =	\
-  $(BIN_OBJ_DIR)/io_runner.o
+ifdef NATIVE  
+	MAIN_OBJS =	\
+  		$(BIN_OBJ_DIR)/io_runner.o  
+
+  ifdef BENCHMARKS
+  	BENCH_OBJS3 = $(BIN_OBJ_DIR)/gen3DOpRunner.o 
+  	BENCH_OBJS2 = $(BIN_OBJ_DIR)/gen3DRunner.o 
+  	BENCH_OBJS1 = $(BIN_OBJ_DIR)/ioRunner.o
+
+  	BENCH_EXE_PATHNAME1 = $(BENCHMARK_OUTPUT_DIR)/ioRunner$(EXE_EXT)
+  	BENCH_EXE_PATHNAME2 = $(BENCHMARK_OUTPUT_DIR)/gen3DRunner$(EXE_EXT)
+  	BENCH_EXE_PATHNAME3 = $(BENCHMARK_OUTPUT_DIR)/gen3DOpRunner$(EXE_EXT)  	
+  else
+  	
+  endif  
 endif
 
-ALL_OBJS = $(OB_BASE_OBJS) $(OB_DESCRIPTOR_OBJS) $(OB_FINGERPRINTS_OBJS) $(OB_FORMAT_OBJS) $(OB_FORMAT_INCHI_OBJS) $(OB_STEREO_OBJS) $(OB_FORCEFIELD_OBJS) $(OB_PLUGIN_OBJS) $(OB_OPS_OBJS) $(BINDER_OBJS) $(MAIN_OBJS)
+MAIN_EXE_DEPEND = $(ALL_OBJS)
+ifndef NATIVE
+	#EXE_POST_HANDLING = $(EXE_PATHNAME).temp
+	MAIN_EXE_DEPEND += $(EXTERNAL_DATA_FILE_NAME)
+	ALL_TARGETS = $(EXTERNAL_DATA_FILE_NAME)
+endif
+
+ALL_TARGETS += $(EXE_PATHNAME) $(BENCH_EXE_PATHNAME1) $(BENCH_EXE_PATHNAME2) $(BENCH_EXE_PATHNAME3)
+
+LINKING_OBJS = $(OB_BASE_OBJS) $(OB_DESCRIPTOR_OBJS) $(OB_FINGERPRINTS_OBJS) $(OB_FORMAT_OBJS) $(OB_FORMAT_INCHI_OBJS) $(OB_STEREO_OBJS) $(OB_FORCEFIELD_OBJS) $(OB_PLUGIN_OBJS) $(OB_OPS_OBJS) $(BINDER_OBJS)
+ALL_OBJS = $(LINKING_OBJS) $(MAIN_OBJS) $(BENCH_OBJS1) $(BENCH_OBJS2) $(BENCH_OBJS3)
+
+all : $(ALL_TARGETS)
+
+$(EXTERNAL_DATA_FILE_NAME) : $(ALL_OBJS)
+	$(EXTERNAL_FILE_PACKAGER) $(BIN_DIR)/$(EXTERNAL_DATA_FILE_NAME) $(OB_EXTERNAL_DATA_FILES) --js-output=$(EXTERNAL_FILE_PACKAGER_JS_OUTPUT)
+
+$(BENCH_EXE_PATHNAME1) : $(ALL_OBJS)
+	$(LINKER) $(LINKER_OPTIONS) -o $(BENCH_EXE_PATHNAME1) $(LINKING_OBJS) $(BENCH_OBJS1) -lm $(OPTIMIZE) $(EMCC_MEM_FILE_OPTION) $(EMCC_EMBED_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
+$(BENCH_EXE_PATHNAME2) : $(ALL_OBJS)
+	$(LINKER) $(LINKER_OPTIONS) -o $(BENCH_EXE_PATHNAME2) $(LINKING_OBJS) $(BENCH_OBJS2) -lm $(OPTIMIZE) $(EMCC_MEM_FILE_OPTION) $(EMCC_EMBED_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
+$(BENCH_EXE_PATHNAME3) : $(ALL_OBJS)
+	$(LINKER) $(LINKER_OPTIONS) -o $(BENCH_EXE_PATHNAME3) $(LINKING_OBJS) $(BENCH_OBJS3) -lm $(OPTIMIZE) $(EMCC_MEM_FILE_OPTION) $(EMCC_EMBED_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
 
 
 $(EXE_PATHNAME) : $(ALL_OBJS)
-	$(LINKER) $(LINKER_OPTIONS) -o $(EXE_PATHNAME) $(ALL_OBJS) -lm $(OPTIMIZE) $(EMCC_MEM_FILE_OPTION) $(EMCC_EMBED_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
+	$(LINKER) $(LINKER_OPTIONS) -o $(EXE_PATHNAME) $(LINKING_OBJS) $(MAIN_OBJS) -lm $(OPTIMIZE) $(EMCC_MEM_FILE_OPTION) $(EMCC_EMBED_FILE_OPTION) $(EMCC_MISC_OPTION) $(EMCC_PRE_JS_OPTION)
+
+# combine pre_extern.js
+#$(EXE_POST_HANDLING) : $(EXE_PATHNAME)
+#	mv $(EXE_PATHNAME) $(EXE_POST_HANDLING)
+#	cat $(EMCC_PRE_JS_FILE_PATHNAME) >> $(EXE_PATHNAME)
+#	cat $(EXE_POST_HANDLING) >> $(EXE_PATHNAME)
+#	rm $(EXE_POST_HANDLING)
+
+
+$(BIN_OBJ_DIR)/%.o: $(BENCHMARK_SRC_DIR)/%.cpp
+	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
+
 $(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/%.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 $(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/%.c
@@ -780,7 +871,11 @@ $(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/%.c
 $(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/stereo/%.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 $(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/math/%.cpp
+	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
+$(BIN_OBJ_DIR)/%.o: $(OB_SRC_DIR)/depict/%.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@	
+$(BIN_OBJ_DIR)/%.o: $(OB_CHARGE_SRC_DIR)/%.cpp
+	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 $(BIN_OBJ_DIR)/%.o: $(OB_DESCRIPTOR_SRC_DIR)/%.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 $(BIN_OBJ_DIR)/%.o: $(OB_FINGERPRINTS_SRC_DIR)/%.cpp
@@ -800,6 +895,8 @@ $(BIN_OBJ_DIR)/%.o: $(BINDER_SRC_DIR)/%.cpp
 $(BIN_OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 $(BIN_OBJ_DIR)/conv.o: $(SRC_DIR)/conv.cpp
+	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
+$(BIN_OBJ_DIR)/forcefield_ops.o: $(OB_OPS_SRC_DIR)/forcefield.cpp
 	$(CPP_COMPILER) $(CPP_COMPILER_OPTIONS) $< -o $@
 clean:
 	rm ($BIN_OBJ_DIR)/*.o

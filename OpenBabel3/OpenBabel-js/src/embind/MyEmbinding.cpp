@@ -852,8 +852,9 @@ EMSCRIPTEN_BINDINGS(ObUtils_Bind) {
         ;
 }
 
-EMSCRIPTEN_BINDINGS(OBForceField_Bind) {
+EMSCRIPTEN_BINDINGS(OBForceField_Bind) {	
     class_<OBForceField, base<OBPlugin>>("OBForceField")        
+    	//.constructor<>()
 		.class_function("FindForceField", select_overload<OBForceField*(const std::string&)>(&OBForceField::FindForceField), allow_raw_pointers())
 		.function("GetUnit", &OBForceField::GetUnit)
 		.function("HasAnalyticalGradients", &OBForceField::HasAnalyticalGradients)
@@ -925,6 +926,7 @@ EMSCRIPTEN_BINDINGS(OBForceField_Bind) {
 
 EMSCRIPTEN_BINDINGS(OBPlugin_Bind) {
     class_<OBPlugin>("OBPlugin")
+    	//.constructor<>()
 		//.function("GetPlugin", &OBPlugin::GetPlugin, allow_raw_pointers())
 		.class_function("GetPlugin", optional_override([](std::string Type, std::string ID){
 				return OBPlugin::GetPlugin(Type.c_str(), ID.c_str());
@@ -950,7 +952,8 @@ EMSCRIPTEN_BINDINGS(OBPlugin_Bind) {
 }
 
 EMSCRIPTEN_BINDINGS(OBOp_Bind) {
-    class_<OBOp, base<OBPlugin>>("OBOp")			
+    class_<OBOp, base<OBPlugin>>("OBOp")	
+    	//.constructor<>()		
 		.class_function("FindType", optional_override([](const std::string id){
 				return OBOp::FindType(id.c_str());
 			}), allow_raw_pointers())
