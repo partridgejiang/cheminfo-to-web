@@ -13,20 +13,22 @@
 	<script src="../../scripts/demoUtils.js"></script>	
 	<!-- InstanceBeginEditable name="demoHead" -->
 	<link href="../../../libs/kekule/themes/default/kekule.css" rel="stylesheet" type="text/css">
-	
-	<script id="scriptOb" src="../../../libs/compiled/openbabel.js"></script>
+		
 	<script src="../../../libs/raphael-min.2.0.1.js"></script>	
 	<script src="../../../libs/Three.js"></script>	
-	<!--
+	
+	<script id="scriptOb" src="../../../libs/compiled/openbabel.js"></script>	
 	<script src="../../../libs/kekule/kekule.js?modules=io,chemWidget,openbabel"></script>			
+	<!--
+	<script src="http://127.0.0.1:8080/src/kekule.js?min=false&modules=io,chemWidget,openbabel"></script>				
 	-->
-	<script src="http://127.0.0.1:8080/src/kekule.js?min=false&modules=io,chemWidget,openbabel"></script>			
-	<script>
-		var OpenBabel;		
+	
+	<script>								
 		function reactOpenBabelReady(e)
 		{		
 			//var OpenBabel = OpenBabelModule();
-			OpenBabel = e.detail.module;
+			var OpenBabel = e.detail.module;
+			//console.log('OpenBabel inited');
 						
 			var fillFormatSelector = function(selElem, formatStrs)
 			{
@@ -311,7 +313,7 @@
 				}
 			}
 		}
-		
+						
 		document.addEventListener('OpenBabel.Initialized', reactOpenBabelReady);
 	</script>
 	<!-- InstanceEndEditable -->
@@ -332,7 +334,7 @@
 			<a href="../documents/index.html">Documents</a>
 			-->
 			<a href="../../../download/index.html">Download</a>
-			<!-- InstanceBeginEditable name="AdditionalMainNavItems" -->
+			<!-- InstanceBeginEditable name="AdditionalMainNavItems" -->ss
 			<!-- InstanceEndEditable -->			
 						
 		</nav>
@@ -359,24 +361,29 @@
 			</header>		
 			<!-- InstanceBeginEditable name="MainContent" -->
 			<h2>Overview</h2>
-			<p>To use the OpenBabel JS compilation, the JavaScript file firstly be included in HTML file:</p>
+			<p>To use the OpenBabel JS compilation, you need to deploy openbabel.js, openbabel.wasm and openbabel.data all togather in the same directory. The JavaScript file should be included in the HTML file:</p>
 			<pre class="CodeBlock">&lt;script src=&quot;openbabel.js&quot;&gt;&lt;/script&gt;<br></pre>
-			<p>The openbabel.js will then load openbabel.wasm, the web assembly compiled from OpenBabel lib. This is a asynchronous process and a custom event <i>OpenBabel.Initialized</i> binding on HTML document will notify that the OpenBabel module is ready:</p>
-			<pre class="CodeBlock">document.addEventListener('OpenBabel.Initialized', function(e){
-	var OpenBabel = e.detail.module;
-	// ...
-})</pre>
+			<p>The openbabel.js will then load openbabel.wasm, the web assembly compiled from OpenBabel lib, and openbabel.data, the external data file need by Open Babel. This is a asynchronous process and   a custom event callback should be used to acknowledge the ready of OpenBabel module:</p>
+			<pre class="CodeBlock">var OpenBabel = OpenBabelModule();
+OpenBabel.onRuntimeInitialized = function()
+{
+  // Now the OpenBabel routines can be called 
+}
+</pre>
+			<!--
 			<p>Another approach to detect the ready of OpenBabel is to define a speciallized function before the openbabel.js script tag:</p>
 			<pre class="CodeBlock">&lt;script&gt;
 function __$openBabelInitialized$__(e)
 {
+  // Now the OpenBabel module is ready
   var OpenBabel = e.module;
   // ...
 }
 &lt;/script&gt;
 &lt;script src=&quot;openbabel.js&quot;&gt;&lt;/script&gt;
 			</pre>
-			<p>After loading, all useful classes are can be accessed from that OpenBabel module. In native OpenBabel, the core class to do data format conversion is <span class="InlineCode">OBConversion</span>. For some reason, in JavaScript compiliation, a wrapper class <span class="InlineCode">ObConversionWrapper</span> is created to wrap functions of OBConversion. Most of I/O job can be done with this wrapper class.</p>
+			-->
+			<p>After initialization, all useful classes can be accessed from that OpenBabel module. In native OpenBabel, the core class to do data format conversion is <span class="InlineCode">OBConversion</span>. For some reason, in JavaScript compiliation, a wrapper class <span class="InlineCode">ObConversionWrapper</span> is created to wrap functions of OBConversion. Most of I/O job can be done with this wrapper class.</p>
 			<h2>Enumeration Supported Formats</h2>
 			<p>OpenBabel supports a lot of different chemical formats (note that not all of them are ported to JavaScript currently).  To list all of them, the following JavaScript code can be used:</p>
 			<pre class="CodeBlock">var conv = new OpenBabel.ObConversionWrapper();  // create ObConversionWrapper instance
@@ -533,7 +540,7 @@ conv.delete();
 		</article>
 	</section>
 	<footer class="MainFooter" id="mainFooter">
-		<span>Copyright 2017 Kekule.js Lab</span>
+		<span>Kekule.js Lab</span>
 	</footer>
 </body>
 <!-- InstanceEnd --></html>

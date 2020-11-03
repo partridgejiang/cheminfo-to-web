@@ -18,10 +18,9 @@
 	<script src="../../../libs/raphael-min.2.0.1.js"></script>	
 	<script src="../../../libs/kekule/kekule.js?modules=io,chemWidget"></script>	
 	<script>
-		window.onload = function()
-		{
-			var Indigo = CreateIndigo();
-			
+		
+		function reactIndigoReady(e)
+		{									
 			// I/O section
 			var listElem = $('listMol');
 			var textAreaSrc = $('textAreaSrc');
@@ -93,6 +92,10 @@
 				$('textAreaTAutomers').value = results.join('\n');
 			}
 		}
+		
+		//document.addEventListener('Indigo.Initialized', reactIndigoReady);
+		var Indigo = CreateIndigo();
+		Indigo.Module.onRuntimeInitialized = reactIndigoReady;
 	</script>
 	<!-- InstanceEndEditable -->
 	
@@ -138,11 +141,17 @@
 				<h1 class="MainTitle" id="mainTitle"><!-- InstanceBeginEditable name="ArticleHeadLine" -->Indigo Demo<!-- InstanceEndEditable --></h1>
 			</header>		
 			<!-- InstanceBeginEditable name="MainContent" -->
-			<h2>Overview</h2>
-			<p>In current compilation, hundreds of Indigo API functions has been exported to JavaScript. Together with indigo.js, an additional JS file (indigoAdapter.js) should be used, which encapsulates all those functions:</p>
+			<h2>Overview</h2>			
+			<p>In current compilation, hundreds of Indigo API functions has been exported to JavaScript. Together with indigo.js and indigo.wasm, an additional JS file (indigoAdapter.js) should be used, which encapsulates all those functions:</p>
 			<pre class="CodeBlock">&lt;script src=&quot;indigo.js&quot;&gt;&lt;/script&gt;<br>&lt;script src=&quot;indigoAdapter.js&quot;&gt;&lt;/script&gt;</pre>
-			<p>After the scripts being loaded, an Indigo namespace with API functions can be created:</p>
-			<pre class="CodeBlock">var Indigo = CreateIndigo();</pre>
+			<p>After the scripts being loaded, an Indigo namespace with API functions can be created. Since the loading of wasm file is a asynchronous process,
+			you have to use a callback function to be notified with the ready state of Indigo:</p>
+			<pre class="CodeBlock">var Indigo = CreateIndigo();
+Indigo.Module.onRuntimeInitialized = function()
+{
+  // Now the functions inside Indigo namespace can be called safely
+}
+			</pre>
 			<p>The original Indigo C  functions are all starts with &quot;indigo&quot; prefix, such as <span class="InlineCode">indigoLoadMoleculeFromString</span>. Since in JavaScript, all functions are encapsulated in one namespace, those leading prefixes are all omitted, you should call the function as <span class="InlineCode">Indigo.loadMoleculeFromString</span> (note the first letter is lowercased).</p>
 			<h2>I/O</h2>
 			<p>For example, the following code can be used to load a MDL MOL format molecule and save it in CML/SMILES format:</p>
@@ -247,7 +256,7 @@ Indigo.free(iterator);</pre>
 		</article>
 	</section>
 	<footer class="MainFooter" id="mainFooter">
-		<span>Copyright 2017 Kekule.js Lab</span>
+		<span>Copyright Kekule.js Lab</span>
 	</footer>
 </body>
 <!-- InstanceEnd --></html>

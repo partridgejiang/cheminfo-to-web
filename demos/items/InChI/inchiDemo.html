@@ -17,9 +17,9 @@
 	<script src="../../../libs/raphael-min.2.0.1.js"></script>
 	<script src="../../../libs/kekule/kekule.js?modules=io,chemWidget"></script>
 	<script>
-		window.onload = function()
-		{
-			var inchiModule = InChIModule();  // Get root module of InChI lib
+		var inchiModule = InChIModule();  // Get root module of InChI lib
+		inchiModule.onRuntimeInitialized = function()
+		{			
 			var molToInchiJson = inchiModule.cwrap('molToInchiJson', 'string', ['string', 'string']);  // wrap function
 			
 			var listElem = $('listMol');
@@ -86,7 +86,10 @@
 			<p>In our compiled InChI  library, a wrapper C function, molToInchiJson is   provided to convert MDL MOL format molecule data into InChI. Firstly, you should call cwrap function to wrap this function into JavaScript one:</p>
 			<pre class="CodeBlock">
 var inchiModule = InChIModule();  // Get root module of InChI lib
-var molToInchiJson = inchiModule.cwrap('molToInchiJson', 'string', ['string', 'string']);  // wrap function</pre>
+inchiModule.onRuntimeInitialized = function()  // a callback function indicating that the InChI is ready
+{
+  var molToInchiJson = inchiModule.cwrap('molToInchiJson', 'string', ['string', 'string']);  // wrap function
+}</pre>
 			<p>Then use it to get InChI information from MDL MOL format data:</p>
 			<pre class="CodeBlock">var molData = '...';  // Set input MDL MOL format data here
 var options = '';  // InChI conversion option string, same as the one in C API
@@ -118,7 +121,7 @@ console.log('InChI: ' + details.inchi, 'AuxInfo' + details.auxInfo);  // output
 		</article>
 	</section>
 	<footer class="MainFooter" id="mainFooter">
-		<span>Copyright 2017 Kekule.js Lab</span>
+		<span>Kekule.js Lab</span>
 	</footer>
 </body>
 <!-- InstanceEnd --></html>
