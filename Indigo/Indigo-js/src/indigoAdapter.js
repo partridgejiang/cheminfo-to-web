@@ -367,7 +367,7 @@ function CreateIndigo(module)  // create Indigo adapter object
 		dbgResetProfiling: Module.cwrap('indigoDbgResetProfiling', 'number', ['number']),
 		dbgProfilingGetCounter: Module.cwrap('indigoDbgProfilingGetCounter', 'number', ['string', 'number'])
 	};
-	result._module = Module;  // save module object
+	result._module = result.Module = Module;  // save module object
 	return result;
 
 };
