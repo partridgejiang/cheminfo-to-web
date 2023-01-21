@@ -16,7 +16,7 @@ ifdef EMCC
 		
 	EMCC_MEM_FILE_OPTION = --memory-init-file 0
 	# Must build with DISABLE_EXCEPTION_CATCHING=0 to enable exception handling, as many functions of Indigo relies on it
-	EMCC_MISC_OPTION = -s NO_EXIT_RUNTIME=1 -s DISABLE_EXCEPTION_CATCHING=0 $(EMCC_MODULARIZE_OPTION) -s USE_PTHREADS=0 -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'	
+	EMCC_MISC_OPTION = -s NO_EXIT_RUNTIME=1 -s DISABLE_EXCEPTION_CATCHING=0 $(EMCC_MODULARIZE_OPTION) -s USE_PTHREADS=0 -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap", "getValue", "setValue"]'	
 	#-s EXCEPTION_CATCHING_WHITELIST="['_indigoLoadMolecule', '_indigoLoadMoleculeFromString', '_indigoLoadMoleculeFromBuffer']"
 	#-s DEMANGLE_SUPPORT=1 -s ASSERTIONS=1 
 	#-s USE_PTHREADS=2 --bind
