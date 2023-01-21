@@ -22,9 +22,9 @@ var indigoExportConfigs = {
 		//"byte**": "array",
 		//"char**": "array",
 		"const byte*": "array",
-		"int*": "array",
-		"const int*": "array",
-		"const int *": "array"
+		"int*": "number",
+		"const int*": "number",
+		"const int *": "number"
 	}
 };
 
