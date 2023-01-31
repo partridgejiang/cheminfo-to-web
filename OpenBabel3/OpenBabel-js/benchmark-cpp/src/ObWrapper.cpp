@@ -150,6 +150,10 @@ protected:
 		else
 			return NULL;
 	}
+	OBFormat* getOBFormatById(std::string id)
+	{			
+		return obConv->FindFormat(id);		
+	}
 public:
 	ObConversionWrapper() 
 	{
@@ -229,6 +233,30 @@ public:
 			this->obConv->SetOutFormat(fmt);
 			//return fmt->GetID();
 			//return (new ObFormatWrapper(fmt));
+			this->outFormatWrapper.setObFormat(fmt);
+			return &this->outFormatWrapper;
+		}
+		else
+			return NULL;
+	}
+	ObFormatWrapper* setInFormatId(std::string id)
+	{
+		OBFormat *fmt = this->getOBFormatById(id);
+		if (fmt)
+		{
+			this->obConv->SetInFormat(fmt);			
+			this->inFormatWrapper.setObFormat(fmt);
+			return &this->inFormatWrapper;
+		}
+		else
+			return NULL;
+	}
+	ObFormatWrapper* setOutFormatId(std::string id)
+	{
+		OBFormat *fmt = this->getOBFormatById(id);
+		if (fmt)
+		{
+			this->obConv->SetOutFormat(fmt);			
 			this->outFormatWrapper.setObFormat(fmt);
 			return &this->outFormatWrapper;
 		}

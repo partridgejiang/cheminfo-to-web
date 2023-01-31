@@ -9,6 +9,7 @@
 #include "openbabel/residue.h"
 #include "openbabel/reaction.h"
 #include "openbabel/op.h"
+#include "openbabel/parsmart.h"
 
 #include "openbabel/obconversion.h"
 
@@ -21,6 +22,7 @@ EMSCRIPTEN_BINDINGS(OB_GLOBAL) {
 	emscripten::function("OBReleaseVersion", &OpenBabel::OBReleaseVersion);	
 
 	register_vector<int>("vector<int>");
+    register_vector<vector<int>>("vector<vector<int>>");
 	register_vector<unsigned int>("vector<unsigned int>");
 	register_vector<double>("vector<double>");
 	register_vector<double*>("vector<double*>");
@@ -809,6 +811,8 @@ EMSCRIPTEN_BINDINGS(OBConvWrapper_Bind) {
 		.function("getOutFormat", &ObConversionWrapper::getOutFormat, allow_raw_pointers())
 		.function("setInFormat", &ObConversionWrapper::setInFormat, allow_raw_pointers())
 		.function("setOutFormat", &ObConversionWrapper::setOutFormat, allow_raw_pointers())
+		.function("setInFormatId", &ObConversionWrapper::setInFormatId, allow_raw_pointers())
+		.function("setOutFormatId", &ObConversionWrapper::setOutFormatId, allow_raw_pointers())
 		.function("readString", &ObConversionWrapper::readString, allow_raw_pointers())
 		.function("writeString", &ObConversionWrapper::writeString, allow_raw_pointers())
 		.function("setInStr", &ObConversionWrapper::setInStr)
@@ -966,6 +970,26 @@ EMSCRIPTEN_BINDINGS(OBOp_Bind) {
 		//.function("DoOps", &OBOp::DoOps, allow_raw_pointers())
 		;
 }
+
+EMSCRIPTEN_BINDINGS(OBSmartsPattern_Bind) {
+    class_<OBSmartsPattern>("OBSmartsPattern")
+        .constructor<>()
+        .function("Init", select_overload<bool(const std::string&)>(&OBSmartsPattern::Init), allow_raw_pointers())
+        .function("GetSMARTS", select_overload<std::string&>(&OBSmartsPattern::GetSMARTS), allow_raw_pointers())
+        //.function("GetSMARTS", &OBSmartsPattern::GetSMARTS, allow_raw_pointers())
+        .function("Empty", &OBSmartsPattern::Empty)
+        .function("IsValid", &OBSmartsPattern::IsValid)
+        .function("NumAtoms", &OBSmartsPattern::NumAtoms)
+        .function("NumBonds", &OBSmartsPattern::NumBonds)
+        .function("Match", select_overload<bool(OBMol&, bool)>(&OBSmartsPattern::Match), allow_raw_pointers())
+        .function("HasMatch", &OBSmartsPattern::HasMatch)
+        .function("NumMatches", &OBSmartsPattern::NumMatches)
+        .function("GetMapList", &OBSmartsPattern::GetMapList, allow_raw_pointers())
+        .function("GetMapList", &OBSmartsPattern::GetUMapList, allow_raw_pointers())
+        ;
+}
+
+
 /*
 EMSCRIPTEN_BINDINGS(OBOpHelper_Bind) {
     class_<OBOpHelper>("OBOpHelper")	
