@@ -985,7 +985,7 @@ EMSCRIPTEN_BINDINGS(OBSmartsPattern_Bind) {
         .function("HasMatch", &OBSmartsPattern::HasMatch)
         .function("NumMatches", &OBSmartsPattern::NumMatches)
         .function("GetMapList", &OBSmartsPattern::GetMapList, allow_raw_pointers())
-        .function("GetMapList", &OBSmartsPattern::GetUMapList, allow_raw_pointers())
+        .function("GetUMapList", &OBSmartsPattern::GetUMapList, allow_raw_pointers())
         ;
 }
 
